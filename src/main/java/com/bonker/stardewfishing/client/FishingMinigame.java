@@ -63,7 +63,7 @@ public class FishingMinigame {
 
         InteractionHand hand = FishingHookLogic.getRodHand(player);
         if (hand != null) {
-            ItemStack bobber = ItemUtils.getBobber(player.getItemInHand(hand));
+            ItemStack bobber = ItemUtils.getBobber(player.getItemInHand(hand), player.registryAccess());
 
             if (bobber.is(SFItems.SONAR_BOBBER.get())) {
                 hasSonarBobber = true;

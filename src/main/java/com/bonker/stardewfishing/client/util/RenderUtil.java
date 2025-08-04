@@ -12,9 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Matrix4d;
 import org.joml.Matrix4f;
-import org.joml.Vector4d;
 
 public class RenderUtil {
     public static void blitF(GuiGraphics guiGraphics, ResourceLocation texture, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight) {
@@ -28,13 +26,16 @@ public class RenderUtil {
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f, x, y, 0).uv(minU, minV).endVertex();
-        bufferbuilder.vertex(matrix4f, x, maxY, 0).uv(minU, maxV).endVertex();
-        bufferbuilder.vertex(matrix4f, maxX, maxY, 0).uv(maxU, maxV).endVertex();
-        bufferbuilder.vertex(matrix4f, maxX, y, 0).uv(maxU, minV).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.addVertex(matrix4f, x, y, 0).setUv(minU, minV);
+        bufferbuilder.addVertex(matrix4f, x, maxY, 0).setUv(minU, maxV);
+        bufferbuilder.addVertex(matrix4f, maxX, maxY, 0).setUv(maxU, maxV);
+        bufferbuilder.addVertex(matrix4f, maxX, y, 0).setUv(maxU, minV);
+        try (MeshData mesh = bufferbuilder.build()) {
+            if (mesh != null) {
+                BufferUploader.drawWithShader(mesh);
+            }
+        }
     }
 
     public static void fillF(GuiGraphics guiGraphics, float pMinX, float pMinY, float pMaxX, float pMaxY, float pZ, int pColor) {
@@ -56,10 +57,10 @@ public class RenderUtil {
         float green = FastColor.ARGB32.green(pColor) / 255.0F;
         float blue = FastColor.ARGB32.blue(pColor) / 255.0F;
         VertexConsumer vertexconsumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
-        vertexconsumer.vertex(matrix4f, pMinX, pMinY, pZ).color(red, green, blue, alpha).endVertex();
-        vertexconsumer.vertex(matrix4f, pMinX, pMaxY, pZ).color(red, green, blue, alpha).endVertex();
-        vertexconsumer.vertex(matrix4f, pMaxX, pMaxY, pZ).color(red, green, blue, alpha).endVertex();
-        vertexconsumer.vertex(matrix4f, pMaxX, pMinY, pZ).color(red, green, blue, alpha).endVertex();
+        vertexconsumer.addVertex(matrix4f, pMinX, pMinY, pZ).setColor(red, green, blue, alpha);
+        vertexconsumer.addVertex(matrix4f, pMinX, pMaxY, pZ).setColor(red, green, blue, alpha);
+        vertexconsumer.addVertex(matrix4f, pMaxX, pMaxY, pZ).setColor(red, green, blue, alpha);
+        vertexconsumer.addVertex(matrix4f, pMaxX, pMinY, pZ).setColor(red, green, blue, alpha);
         guiGraphics.flush();
     }
 
@@ -93,31 +94,6 @@ public class RenderUtil {
         if (doShake) {
             poseStack.popPose();
         }
-    }
-
-    private static VertexConsumer vertexD(VertexConsumer vertexConsumer, Matrix4d pMatrix, double pX, double pY, double pZ) {
-        Vector4d vec = pMatrix.transform(new Vector4d(pX, pY, pZ, 1.0));
-        return vertexConsumer.vertex(vec.x(), vec.y(), vec.z());
-    }
-
-    public static void blitD(GuiGraphics guiGraphics, ResourceLocation texture, double x, double y, int uOffset, int vOffset, int uWidth, int vHeight) {
-        double maxX = x + uWidth;
-        double maxY = y + vHeight;
-        float minU = uOffset / 256F;
-        float minV = vOffset / 256F;
-        float maxU = (uOffset + uWidth) / 256F;
-        float maxV = (vOffset + vHeight) / 256F;
-
-        RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        Matrix4d matrix = new Matrix4d(guiGraphics.pose().last().pose());
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        vertexD(bufferbuilder, matrix, x, y, 0).uv(minU, minV).endVertex();
-        vertexD(bufferbuilder, matrix, x, maxY, 0).uv(minU, maxV).endVertex();
-        vertexD(bufferbuilder, matrix, maxX, maxY, 0).uv(maxU, maxV).endVertex();
-        vertexD(bufferbuilder, matrix, maxX, y, 0).uv(maxU, minV).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
     }
 
     private static IntIterator slices(int pTarget, int pTotal) {

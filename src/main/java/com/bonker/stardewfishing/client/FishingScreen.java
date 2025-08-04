@@ -8,7 +8,7 @@ import com.bonker.stardewfishing.client.util.Shake;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
 import com.bonker.stardewfishing.common.networking.C2SCompleteMinigamePacket;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
-import com.bonker.stardewfishing.common.networking.SFNetworking;
+import com.bonker.stardewfishing.proxy.ClientProxy;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -87,7 +88,7 @@ public class FishingScreen extends Screen {
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         if (minecraft == null) return;
-        partialTick = minecraft.getFrameTime();
+        partialTick = ClientProxy.getPartialTick();
 
         PoseStack poseStack = pGuiGraphics.pose();
         ResourceLocation texture = lava ? NETHER_TEXTURE : TEXTURE;
@@ -104,13 +105,13 @@ public class FishingScreen extends Screen {
             poseStack.popPose();
         } else if (status == Status.CHEST_OPENING) {
             // darken screen
-            renderBackground(pGuiGraphics);
+            renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
             int frame = Math.min(30 - animationTimer, 19) / 2;
             pGuiGraphics.blit(goldenChest ? GOLDEN_CHEST_TEXTURE : CHEST_TEXTURE, leftPos + 38 / 2 - 64, topPos, 0, frame * 128, 128, 128, 128, 1280);
         } else {
             // darken screen
-            renderBackground(pGuiGraphics);
+            renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
             RenderUtil.drawWithShake(poseStack, shake, partialTick, status == Status.SUCCESS || status == Status.FAILURE, () -> {
                 RenderUtil.drawWithBlend(() -> {
@@ -205,7 +206,7 @@ public class FishingScreen extends Screen {
         }
 
         if (status != Status.HIT_TEXT) {
-            pGuiGraphics.drawString(font, StardewFishing.MOD_NAME, 2, height - 2 - font.lineHeight, 0x6969697F);
+            pGuiGraphics.drawString(font, StardewFishing.MOD_NAME, 2, height - 2 - font.lineHeight, 0x6969697F, false);
         }
     }
 
@@ -352,7 +353,7 @@ public class FishingScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        SFNetworking.sendToServer(new C2SCompleteMinigamePacket(status == Status.SUCCESS || status == Status.CHEST_OPENING, accuracy, gotChest));
+        PacketDistributor.sendToServer(new C2SCompleteMinigamePacket(status == Status.SUCCESS || status == Status.CHEST_OPENING, accuracy, gotChest));
 
         stopReelingSounds();
     }

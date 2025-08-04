@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "stardew_fishing:fish_display",
+    "id": "stardew_fishing:fish_display",
     "count": 1
   }
 }

@@ -4,6 +4,7 @@ import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
+import com.bonker.stardewfishing.server.data.FishingHookAttachment;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,8 +32,6 @@ public abstract class FishingHookMixin extends Entity implements FishingHookAcce
 
     @Inject(method = "catchingFish", at = @At(value = "HEAD"), cancellable = true)
     private void cancel_catchingFish(BlockPos pPos, CallbackInfo ci) {
-        FishingHook hook = (FishingHook) (Object) this;
-
         if (getNibble() <= 0 && getTimeUntilHooked() <= 0 && getTimeUntilLured() <= 0) {
             // replicate vanilla
             int time = Mth.nextInt(random, 100, 600);
@@ -44,14 +43,14 @@ public abstract class FishingHookMixin extends Entity implements FishingHookAcce
             setTimeUntilLured(time);
         }
 
-        if (FishingHookLogic.getStoredRewards(hook).map(list -> !list.isEmpty()).orElse(false)) {
+        if (!FishingHookAttachment.get((FishingHook) (Object) this).getRewards().isEmpty()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "retrieve",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraftforge/eventbus/api/IEventBus;post(Lnet/minecraftforge/eventbus/api/Event;)Z"),
+                    target = "Lnet/neoforged/bus/api/IEventBus;post(Lnet/neoforged/bus/api/Event;)Lnet/neoforged/bus/api/Event;"),
             cancellable = true)
     public void retrieve(ItemStack pStack, CallbackInfoReturnable<Integer> cir, @Local List<ItemStack> items) {
         FishingHook hook = (FishingHook) (Object) this;
@@ -59,7 +58,7 @@ public abstract class FishingHookMixin extends Entity implements FishingHookAcce
         if (player == null) return;
 
         if (items.stream().anyMatch(stack -> stack.is(StardewFishing.STARTS_MINIGAME))) {
-            FishingHookLogic.getStoredRewards(hook).ifPresent(rewards -> rewards.addAll(items));
+            FishingHookAttachment.get(hook).getRewards().addAll(items);
             if (FishingHookLogic.startStardewMinigame(player)) {
                 cir.cancel();
             }

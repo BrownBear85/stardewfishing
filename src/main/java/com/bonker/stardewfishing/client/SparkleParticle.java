@@ -9,14 +9,12 @@ import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 public class SparkleParticle extends TextureSheetParticle {
-    private static final Vector3f COLOR = new Vector3f();
+    private static final Vector3f COLOR = new Vector3f(
+            FastColor.ARGB32.red(SFItems.LEGENDARY_FISH_COLOR) / 255F,
+            FastColor.ARGB32.green(SFItems.LEGENDARY_FISH_COLOR) / 255F,
+            FastColor.ARGB32.blue(SFItems.LEGENDARY_FISH_COLOR) / 255F
+    );
     private static final float SIZE = 0.1F;
-
-    static {
-        COLOR.x = FastColor.ARGB32.red(SFItems.LEGENDARY_FISH_COLOR) / 255F;
-        COLOR.y = FastColor.ARGB32.green(SFItems.LEGENDARY_FISH_COLOR) / 255F;
-        COLOR.z = FastColor.ARGB32.blue(SFItems.LEGENDARY_FISH_COLOR) / 255F;
-    }
 
     private final SpriteSet sprites;
 

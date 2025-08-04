@@ -1,11 +1,10 @@
 package com.bonker.stardewfishing.server.data;
 
 import com.bonker.stardewfishing.common.init.SFLootPoolEntryTypes;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -16,13 +15,17 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class OptionalLootItem extends LootPoolSingletonContainer {
+    public static final MapCodec<OptionalLootItem> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            ResourceLocation.CODEC.fieldOf("name").forGetter(o -> o.itemId)
+    ).and(singletonFields(inst)).apply(inst, OptionalLootItem::new));
+
     private final ResourceLocation itemId;
     @Nullable
     private final Item item;
@@ -33,10 +36,10 @@ public class OptionalLootItem extends LootPoolSingletonContainer {
         }
     };
 
-    protected OptionalLootItem(ResourceLocation itemId, int pWeight, int pQuality, LootItemCondition[] pConditions, LootItemFunction[] pFunctions) {
+    protected OptionalLootItem(ResourceLocation itemId, int pWeight, int pQuality, List<LootItemCondition> pConditions, List<LootItemFunction> pFunctions) {
         super(pWeight, pQuality, pConditions, pFunctions);
         this.itemId = itemId;
-        Item item = ForgeRegistries.ITEMS.getValue(itemId);
+        Item item = BuiltInRegistries.ITEM.get(itemId);
         this.item = item == Items.AIR ? null : item;
         this.compositeFunction = LootItemFunctions.compose(pFunctions);
     }
@@ -65,18 +68,6 @@ public class OptionalLootItem extends LootPoolSingletonContainer {
         @Override
         public int getWeight(float luck) {
             return item == null ? 0 : super.getWeight(luck);
-        }
-    }
-
-    public static class Serializer extends LootPoolSingletonContainer.Serializer<OptionalLootItem> {
-        public void serializeCustom(JsonObject json, OptionalLootItem entry, JsonSerializationContext conditions) {
-            super.serializeCustom(json, entry, conditions);
-            json.addProperty("name", entry.itemId.toString());
-        }
-
-        protected OptionalLootItem deserialize(JsonObject json, JsonDeserializationContext context, int weight, int quality, LootItemCondition[] conditions, LootItemFunction[] functions) {
-            ResourceLocation itemId = ResourceLocation.parse(GsonHelper.getAsString(json, "name"));
-            return new OptionalLootItem(itemId, weight, quality, conditions, functions);
         }
     }
 }

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:scute",
+          "name": "minecraft:turtle_scute",
           "weight": 10,
           "functions": [
             {

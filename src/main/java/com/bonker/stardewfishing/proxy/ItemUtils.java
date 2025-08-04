@@ -1,11 +1,12 @@
 package com.bonker.stardewfishing.proxy;
 
 import com.bonker.stardewfishing.StardewFishing;
+import com.bonker.stardewfishing.common.init.SFComponentTypes;
+import com.bonker.stardewfishing.common.items.LegendaryCatch;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -14,15 +15,16 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ItemUtils {
-    public static ItemStack getBobber(ItemStack fishingRod) {
+    public static ItemStack getBobber(ItemStack fishingRod, HolderLookup.Provider registryAccess) {
         if (StardewFishing.AQUACULTURE_INSTALLED && AquacultureProxy.isAquaRod(fishingRod)) {
             return AquacultureProxy.getBobber(fishingRod);
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
-            return TideProxy.getBobber(fishingRod);
+            return TideProxy.getBobber(fishingRod, registryAccess);
         } else {
-            return getBobberNBT(fishingRod);
+            return fishingRod.getOrDefault(SFComponentTypes.BOBBER, ItemStack.EMPTY);
         }
     }
 
@@ -46,13 +48,13 @@ public class ItemUtils {
         }
     }
 
-    public static void setBobber(ItemStack fishingRod, ItemStack bobber) {
+    public static void setBobber(ItemStack fishingRod, ItemStack bobber, HolderLookup.Provider registryAccess) {
         if (StardewFishing.AQUACULTURE_INSTALLED && AquacultureProxy.isAquaRod(fishingRod)) {
             AquacultureProxy.setBobber(fishingRod, bobber);
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
-            TideProxy.setBobber(fishingRod, bobber);
+            TideProxy.setBobber(fishingRod, bobber, registryAccess);
         } else {
-            setBobberNBT(fishingRod, bobber);
+            fishingRod.set(SFComponentTypes.BOBBER, bobber);
         }
     }
 
@@ -62,30 +64,6 @@ public class ItemUtils {
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
             TideProxy.damageEquippedBobber(fishingRod, player);
         }
-    }
-
-    private static ItemStack getBobberNBT(ItemStack fishingRod) {
-        CompoundTag nbt = fishingRod.getOrCreateTag();
-        if (nbt.contains("modifier", Tag.TAG_COMPOUND)) {
-            CompoundTag modifier = nbt.getCompound("modifier");
-            if (modifier.contains("bobber", Tag.TAG_COMPOUND)) {
-                return ItemStack.of(modifier.getCompound("bobber"));
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    private static void setBobberNBT(ItemStack fishingRod, ItemStack bobber) {
-        CompoundTag nbt = fishingRod.getOrCreateTag();
-        CompoundTag modifier;
-        if (nbt.contains("modifier", Tag.TAG_COMPOUND)) {
-            modifier = nbt.getCompound("modifier");
-        } else {
-            modifier = new CompoundTag();
-        }
-
-        modifier.put("bobber", bobber.save(new CompoundTag()));
-        nbt.put("modifier", modifier);
     }
 
     public static FishingHook spawnHook(ServerPlayer player, ItemStack fishingRod, Vec3 pos) {
@@ -106,15 +84,15 @@ public class ItemUtils {
         }
     }
 
-    public static List<ItemStack> getAllModifierItems(ItemStack fishingRod) {
+    public static List<ItemStack> getAllModifierItems(ItemStack fishingRod, HolderLookup.Provider registryAccess) {
         if (StardewFishing.AQUACULTURE_INSTALLED && AquacultureProxy.isAquaRod(fishingRod)) {
             return AquacultureProxy.getAllModifierItems(fishingRod);
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
-            return TideProxy.getAllModifierItems(fishingRod);
+            return TideProxy.getAllModifierItems(fishingRod, registryAccess);
         } else {
             List<ItemStack> modifiers = new ArrayList<>();
             modifiers.add(fishingRod);
-            ItemStack bobber = getBobberNBT(fishingRod);
+            ItemStack bobber = ItemUtils.getBobber(fishingRod, registryAccess);
             if (!bobber.isEmpty()) {
                 modifiers.add(bobber);
             }
@@ -134,27 +112,15 @@ public class ItemUtils {
         return stack.is(StardewFishing.LEGENDARY_FISH);
     }
 
-    public static void recordLegendaryCatch(ItemStack stack, Player player) {
-        CompoundTag nbt = stack.getOrCreateTag();
-        CompoundTag object = new CompoundTag();
-        object.putString("player", player.getScoreboardName());
-        object.putLong("time", new Date().getTime());
-        nbt.put("legendary_catch", object);
-    }
-
     public static void addCatchTooltip(ItemStack stack, List<Component> tooltip) {
-        if (!stack.hasTag()) {
+        if (!stack.has(SFComponentTypes.LEGENDARY_CATCH)) {
             return;
         }
-        CompoundTag nbt = stack.getOrCreateTag();
-        if (nbt.contains("legendary_catch")) {
-            CompoundTag object = nbt.getCompound("legendary_catch");
+        LegendaryCatch data = Objects.requireNonNull(stack.get(SFComponentTypes.LEGENDARY_CATCH));
+        String time = DateFormat.getDateTimeInstance().format(new Date(data.time()));
 
-            String player = object.getString("player");
-            String time = DateFormat.getDateTimeInstance().format(new Date(object.getLong("time")));
-            tooltip.add(Component.empty());
-            tooltip.add(Component.translatable("tooltip.stardew_fishing.legendary_data", player, time)
-                    .withStyle(StardewFishing.LIGHTER_COLOR));
-        }
+        tooltip.add(Component.empty());
+        tooltip.add(Component.translatable("tooltip.stardew_fishing.legendary_data", data.player(), time)
+                .withStyle(StardewFishing.LIGHTER_COLOR));
     }
 }

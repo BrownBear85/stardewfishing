@@ -139,6 +139,8 @@ public class RodTooltipHandler {
         }
 
         private void renderSlot(GuiGraphics guiGraphics, float partialTick) {
+            if (Minecraft.getInstance().level == null) return;
+
             float anim = slotAnim.getInterpolated(partialTick);
             float x = (1 / anim) * (slot.x + 8);
             float y = (1 / anim) * (slot.y + 8);
@@ -147,7 +149,7 @@ public class RodTooltipHandler {
             guiGraphics.pose().scale(anim, anim, 1);
 
             RenderUtil.blitF(guiGraphics, TEXTURE, x - 35, y - 12, 0, 0, 29, 27);
-            RenderUtil.renderItemF(guiGraphics, ItemUtils.getBobber(stack), x - 30, y - 8);
+            RenderUtil.renderItemF(guiGraphics, ItemUtils.getBobber(stack, Minecraft.getInstance().level.registryAccess()), x - 30, y - 8);
 
             guiGraphics.pose().popPose();
         }

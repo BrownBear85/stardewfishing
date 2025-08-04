@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -16,8 +17,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.io.*;
@@ -67,7 +67,7 @@ public class FishBehaviorReloadListener extends SimplePreparableReloadListener<M
                     .resultOrPartial(errorMsg -> StardewFishing.LOGGER.warn(makeError(entry.getKey(), errorMsg)))
                     .ifPresent(behaviorList -> {
                         behaviorList.behaviors.forEach((loc, fishBehavior) -> {
-                            Item item = ForgeRegistries.ITEMS.getValue(loc);
+                            Item item = BuiltInRegistries.ITEM.get(loc);
                             if (item == Items.AIR) {
                                 if (ModList.get().isLoaded(loc.getNamespace())) {
                                     throw new RuntimeException(makeError(entry.getKey(), "Mod '" + loc.getNamespace() + "' present but item not registered: " + loc.getPath()));

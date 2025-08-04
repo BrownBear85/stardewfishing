@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -15,9 +16,9 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModList;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Optional;
 public class MinigameModifiersReloadListener extends SimplePreparableReloadListener<Map<String, JsonObject>> {
     private static final Gson GSON_INSTANCE = new Gson();
     private static final ResourceLocation LOCATION = StardewFishing.resource("minigame_modifiers.json");
+    @Nullable
     private static MinigameModifiersReloadListener INSTANCE;
 
     private final Map<Item, MinigameModifiers> modifiers = new HashMap<>();
@@ -52,7 +54,7 @@ public class MinigameModifiersReloadListener extends SimplePreparableReloadListe
             ModifiersList.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
                     .resultOrPartial(errorMsg -> StardewFishing.LOGGER.warn("Failed to decode minigame modifiers list {} in data pack {} - {}", LOCATION, entry.getKey(), errorMsg))
                     .ifPresent(behaviorList -> behaviorList.modifiers.forEach((loc, minigameModifiers) -> {
-                        Item item = ForgeRegistries.ITEMS.getValue(loc);
+                        Item item = BuiltInRegistries.ITEM.get(loc);
                         if (item == Items.AIR) {
                             if (ModList.get().isLoaded(loc.getNamespace())) {
                                 throw new RuntimeException("Mod '" + loc.getNamespace() + "' present but item not registered: " + loc.getPath());
@@ -74,7 +76,7 @@ public class MinigameModifiersReloadListener extends SimplePreparableReloadListe
     }
 
     public static Optional<MinigameModifiers> getModifiers(ItemStack stack) {
-        if (INSTANCE.modifiers.containsKey(stack.getItem())) {
+        if (INSTANCE != null && INSTANCE.modifiers.containsKey(stack.getItem())) {
             return Optional.of(INSTANCE.modifiers.get(stack.getItem()));
         }
         return Optional.empty();

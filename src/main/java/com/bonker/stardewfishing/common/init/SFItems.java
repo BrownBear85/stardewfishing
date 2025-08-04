@@ -1,41 +1,39 @@
 package com.bonker.stardewfishing.common.init;
 
 import com.bonker.stardewfishing.StardewFishing;
-import com.bonker.stardewfishing.common.items.SFBobberItem;
 import com.bonker.stardewfishing.common.items.SFTooltipItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SFItems {
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, StardewFishing.MODID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(StardewFishing.MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, StardewFishing.MODID);
 
     public static final int LEGENDARY_FISH_COLOR = 0xFFFFBE;
     public static final Component LEGENDARY_FISH_TOOLTIP = Component.translatable("tooltip.stardew_fishing.legendary_fish")
             .withStyle(StardewFishing.LEGENDARY);
 
-    public static final RegistryObject<Item> TRAP_BOBBER = ITEMS.register("trap_bobber",
-            () -> new SFBobberItem(new Item.Properties().durability(64)));
+    public static final DeferredItem<SFTooltipItem> TRAP_BOBBER = ITEMS.registerItem("trap_bobber",
+            prop -> new SFTooltipItem(prop.durability(64)));
 
-    public static final RegistryObject<Item> CORK_BOBBER = ITEMS.register("cork_bobber",
-            () -> new SFBobberItem(new Item.Properties().durability(64)));
+    public static final DeferredItem<SFTooltipItem> CORK_BOBBER = ITEMS.registerItem("cork_bobber",
+            prop -> new SFTooltipItem(prop.durability(64)));
 
-    public static final RegistryObject<Item> SONAR_BOBBER = ITEMS.register("sonar_bobber",
-            () -> new SFBobberItem(new Item.Properties().durability(64)));
+    public static final DeferredItem<SFTooltipItem> SONAR_BOBBER = ITEMS.registerItem("sonar_bobber",
+            prop -> new SFTooltipItem(prop.durability(64)));
 
-    public static final RegistryObject<Item> TREASURE_BOBBER = ITEMS.register("treasure_bobber",
-            () -> new SFBobberItem(new Item.Properties().durability(64)));
+    public static final DeferredItem<SFTooltipItem> TREASURE_BOBBER = ITEMS.registerItem("treasure_bobber",
+            prop -> new SFTooltipItem(prop.durability(64)));
 
-    public static final RegistryObject<Item> QUALITY_BOBBER = ITEMS.register("quality_bobber",
-            () -> new SFBobberItem(new Item.Properties().durability(64)) {
+    public static final DeferredItem<SFTooltipItem> QUALITY_BOBBER = ITEMS.registerItem("quality_bobber",
+            prop -> new SFTooltipItem(prop.durability(64)) {
         @Override
         protected List<Component> makeTooltip() {
             List<Component> tooltip = super.makeTooltip();
@@ -46,37 +44,37 @@ public class SFItems {
         }
     });
 
-    public static final RegistryObject<Item> GOLIATH_GROUPER = ITEMS.register("goliath_grouper",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> GOLIATH_GROUPER = ITEMS.registerItem("goliath_grouper",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> VAMPIRE_PAYARA = ITEMS.register("vampire_payara",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> VAMPIRE_PAYARA = ITEMS.registerItem("vampire_payara",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> GOLDEN_SNOOK = ITEMS.register("golden_snook",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> GOLDEN_SNOOK = ITEMS.registerItem("golden_snook",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> SABRETOOTHED_TIGERFISH = ITEMS.register("sabretoothed_tigerfish",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> SABRETOOTHED_TIGERFISH = ITEMS.registerItem("sabretoothed_tigerfish",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> CHROMATIC_ARAPAIMA = ITEMS.register("chromatic_arapaima",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> CHROMATIC_ARAPAIMA = ITEMS.registerItem("chromatic_arapaima",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> CYCLOPS_MAHIMAHI = ITEMS.register("cyclops_mahimahi",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> CYCLOPS_MAHIMAHI = ITEMS.registerItem("cyclops_mahimahi",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> STORM_TARPON = ITEMS.register("storm_tarpon",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> STORM_TARPON = ITEMS.registerItem("storm_tarpon",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> BLAZING_OARFISH = ITEMS.register("blazing_oarfish",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> BLAZING_OARFISH = ITEMS.registerItem("blazing_oarfish",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> CRYSTALLINE_SNAKEHEAD = ITEMS.register("crystalline_snakehead",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> CRYSTALLINE_SNAKEHEAD = ITEMS.registerItem("crystalline_snakehead",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<Item> DEMON_GAR = ITEMS.register("demon_gar",
-            () -> new SFTooltipItem(new Item.Properties()));
+    public static final DeferredItem<SFTooltipItem> DEMON_GAR = ITEMS.registerItem("demon_gar",
+            SFTooltipItem::new);
 
-    public static final RegistryObject<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("items", () -> CreativeModeTab.builder()
+    public static final Supplier<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("items", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stardewFishing"))
             .icon(() -> new ItemStack(SABRETOOTHED_TIGERFISH.get()))
             .displayItems((pParameters, pOutput) -> {

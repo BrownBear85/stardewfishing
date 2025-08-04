@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " y ",
+    "yzy",
+    "yxy"
+  ],
+  "key": {
+    "x": {
+      "item": "minecraft:observer"
+    },
+    "y": {
+      "item": "minecraft:copper_ingot"
+    },
+    "z": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "id": "stardew_fishing:sonar_bobber",
+    "count": 1
+  }
+}

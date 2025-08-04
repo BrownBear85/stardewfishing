@@ -6,13 +6,13 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "name": "netherdepthsupgrade:gameplay/nether_fishing/junk",
+          "value": "netherdepthsupgrade:gameplay/nether_fishing/junk",
           "quality": -2,
           "weight": 10
         },
         {
           "type": "minecraft:loot_table",
-          "name": "netherdepthsupgrade:gameplay/nether_fishing/fish",
+          "value": "netherdepthsupgrade:gameplay/nether_fishing/fish",
           "quality": 0,
           "weight": 90
         }

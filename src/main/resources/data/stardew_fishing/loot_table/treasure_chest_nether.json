@@ -6,27 +6,27 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/nether_ores",
+          "value": "stardew_fishing:treasure/nether_ores",
           "weight": 47
         },
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/misc_nether",
+          "value": "stardew_fishing:treasure/misc_nether",
           "weight": 18
         },
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/misc",
+          "value": "stardew_fishing:treasure/misc",
           "weight": 18
         },
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/bobbers",
+          "value": "stardew_fishing:treasure/bobbers",
           "weight": 8
         },
         {
           "type": "minecraft:loot_table",
-          "name": "minecraft:gameplay/fishing/treasure",
+          "value": "minecraft:gameplay/fishing/treasure",
           "weight": 11
         }
       ]

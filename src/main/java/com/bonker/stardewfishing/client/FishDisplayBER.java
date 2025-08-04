@@ -2,23 +2,21 @@ package com.bonker.stardewfishing.client;
 
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.blocks.FishDisplayBlockEntity;
-import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -67,7 +65,7 @@ public class FishDisplayBER implements BlockEntityRenderer<FishDisplayBlockEntit
         if (hitResult != null && hitResult.getType() == HitResult.Type.BLOCK) {
             if (((BlockHitResult) hitResult).getBlockPos().equals(pos)) {
                 MutableComponent component = Component.empty().append(stack.getHoverName());
-                if (stack.hasCustomHoverName()) {
+                if (stack.has(DataComponents.CUSTOM_NAME)) {
                     component.withStyle(ChatFormatting.ITALIC);
                 }
                 if (legendary) {

@@ -3,7 +3,7 @@ package com.bonker.stardewfishing.server.data;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.init.SFItems;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -18,7 +18,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
@@ -26,10 +26,10 @@ import org.joml.Vector2i;
 import java.util.List;
 
 public class LegendaryFishModifier implements IGlobalLootModifier {
-    public static final Codec<LegendaryFishModifier> CODEC = Codec.unit(LegendaryFishModifier::new);
+    public static final MapCodec<LegendaryFishModifier> CODEC = MapCodec.unit(LegendaryFishModifier::new);
 
     private static final List<ResourceLocation> FISHING_LOOT_TABLES = List.of(
-            BuiltInLootTables.FISHING,
+            BuiltInLootTables.FISHING.location(),
             ResourceLocation.fromNamespaceAndPath("aquaculture", "gameplay/fishing/fish"),
             ResourceLocation.fromNamespaceAndPath("aquaculture", "gameplay/fishing/lava/fish"),
             ResourceLocation.fromNamespaceAndPath("aquaculture", "gameplay/fishing/nether/fish"),
@@ -107,7 +107,7 @@ public class LegendaryFishModifier implements IGlobalLootModifier {
     }
 
     @Override
-    public Codec<LegendaryFishModifier> codec() {
+    public MapCodec<LegendaryFishModifier> codec() {
         return CODEC;
     }
 

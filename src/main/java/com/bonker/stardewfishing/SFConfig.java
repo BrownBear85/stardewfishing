@@ -3,26 +3,24 @@ package com.bonker.stardewfishing;
 import com.bonker.stardewfishing.common.init.SFAttributes;
 import com.bonker.stardewfishing.server.AttributeCache;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-@Mod.EventBusSubscriber(modid = StardewFishing.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SFConfig {
-    static final ForgeConfigSpec SERVER_SPEC;
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    static final ModConfigSpec SERVER_SPEC;
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.DoubleValue QUALITY_1_THRESHOLD;
-    private static final ForgeConfigSpec.DoubleValue QUALITY_2_THRESHOLD;
-    private static final ForgeConfigSpec.DoubleValue QUALITY_3_THRESHOLD;
-    private static final ForgeConfigSpec.DoubleValue QUALITY_1_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue QUALITY_2_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue QUALITY_3_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue BITE_TIME_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue TREASURE_CHEST_CHANCE;
-    private static final ForgeConfigSpec.DoubleValue GOLDEN_CHEST_CHANCE;
-    private static final ForgeConfigSpec.BooleanValue INVENTORY_BOBBER_EQUIPPING;
-    private static final ForgeConfigSpec.BooleanValue LEGENDARY_FISH_FLASHING;
-    private static final ForgeConfigSpec.DoubleValue LEGENDARY_FISH_CHANCE;
+    private static final ModConfigSpec.DoubleValue QUALITY_1_THRESHOLD;
+    private static final ModConfigSpec.DoubleValue QUALITY_2_THRESHOLD;
+    private static final ModConfigSpec.DoubleValue QUALITY_3_THRESHOLD;
+    private static final ModConfigSpec.DoubleValue QUALITY_1_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue QUALITY_2_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue QUALITY_3_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue BITE_TIME_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue TREASURE_CHEST_CHANCE;
+    private static final ModConfigSpec.DoubleValue GOLDEN_CHEST_CHANCE;
+    private static final ModConfigSpec.BooleanValue INVENTORY_BOBBER_EQUIPPING;
+    private static final ModConfigSpec.BooleanValue LEGENDARY_FISH_FLASHING;
+    private static final ModConfigSpec.DoubleValue LEGENDARY_FISH_CHANCE;
 
     static {
         QUALITY_1_THRESHOLD = BUILDER
@@ -114,7 +112,7 @@ public class SFConfig {
     }
 
     public static boolean isInventoryEquippingEnabled() {
-        return INVENTORY_BOBBER_EQUIPPING.get();
+        return SERVER_SPEC.isLoaded() ? INVENTORY_BOBBER_EQUIPPING.get() : false;
     }
 
     public static boolean isLegendaryFlashingEnabled() {

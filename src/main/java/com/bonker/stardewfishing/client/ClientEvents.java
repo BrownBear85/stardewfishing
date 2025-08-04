@@ -4,25 +4,25 @@ import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.init.SFBlockEntities;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
+import com.bonker.stardewfishing.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ContainerScreenEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ContainerScreenEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.sound.PlaySoundSourceEvent;
+import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
 
 public class ClientEvents {
-    @Mod.EventBusSubscriber(modid = StardewFishing.MODID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = StardewFishing.MODID, value = Dist.CLIENT)
     public static class ForgeBus {
         @SubscribeEvent
         public static void onRenderTooltip(final RenderTooltipEvent.Pre event) {
@@ -30,11 +30,7 @@ public class ClientEvents {
         }
 
         @SubscribeEvent
-        public static void onClientTick(final TickEvent.ClientTickEvent event) {
-            if (event.phase != TickEvent.Phase.START) {
-                return;
-            }
-
+        public static void onClientTick(final ClientTickEvent.Pre event) {
             if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
                 RodTooltipHandler.tick(containerScreen.hoveredSlot, containerScreen.getMenu().getCarried());
             } else {
@@ -45,7 +41,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onScreenRendered(final ContainerScreenEvent.Render.Foreground event) {
             if (SFConfig.isInventoryEquippingEnabled()) {
-                RodTooltipHandler.render(event.getGuiGraphics(), Minecraft.getInstance().getPartialTick(), event.getMouseX() - event.getContainerScreen().getGuiLeft(), event.getMouseY() - event.getContainerScreen().getGuiTop());
+                RodTooltipHandler.render(event.getGuiGraphics(), ClientProxy.getPartialTick(), event.getMouseX() - event.getContainerScreen().getGuiLeft(), event.getMouseY() - event.getContainerScreen().getGuiTop());
             }
         }
 
@@ -83,10 +79,9 @@ public class ClientEvents {
                 StardewFishing.LOGGER.error("An exception occurred while trying to replace a sound event. I think this happens when you try to use a fishing rod in extremely laggy conditions.", e);
             }
         }
-    }
 
-    @Mod.EventBusSubscriber(modid = StardewFishing.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ModBus {
+        // MOD BUS
+
         @SubscribeEvent
         public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(SFBlockEntities.FISH_DISPLAY.get(), FishDisplayBER::new);

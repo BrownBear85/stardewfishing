@@ -6,27 +6,27 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/overworld_ores",
+          "value": "stardew_fishing:treasure/overworld_ores",
           "weight": 47
         },
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/misc_overworld",
+          "value": "stardew_fishing:treasure/misc_overworld",
           "weight": 15
         },
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/misc",
+          "value": "stardew_fishing:treasure/misc",
           "weight": 15
         },
         {
           "type": "minecraft:loot_table",
-          "name": "stardew_fishing:treasure/bobbers",
+          "value": "stardew_fishing:treasure/bobbers",
           "weight": 8
         },
         {
           "type": "minecraft:loot_table",
-          "name": "minecraft:gameplay/fishing/treasure",
+          "value": "minecraft:gameplay/fishing/treasure",
           "weight": 15
         }
       ]

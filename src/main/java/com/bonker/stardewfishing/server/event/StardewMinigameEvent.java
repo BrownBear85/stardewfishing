@@ -3,7 +3,7 @@ package com.bonker.stardewfishing.server.event;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 public abstract class StardewMinigameEvent extends Event {
     private final ServerPlayer player;

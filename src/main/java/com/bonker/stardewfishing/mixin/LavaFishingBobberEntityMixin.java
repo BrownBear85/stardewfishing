@@ -4,6 +4,7 @@ import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
+import com.bonker.stardewfishing.server.data.FishingHookAttachment;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,7 +51,7 @@ public abstract class LavaFishingBobberEntityMixin extends FishingHook {
             timeUntilLured = Math.max(10, (int) (timeUntilLured * SFConfig.getBiteTimeMultiplier()));
         }
 
-        if (FishingHookLogic.getStoredRewards(this).isEmpty()) {
+        if (FishingHookAttachment.get(this).getRewards().isEmpty()) {
             ci.cancel();
         }
     }
@@ -64,7 +65,7 @@ public abstract class LavaFishingBobberEntityMixin extends FishingHook {
         if (player == null) return;
 
         if (items.stream().anyMatch(stack -> stack.is(StardewFishing.STARTS_MINIGAME))) {
-            FishingHookLogic.getStoredRewards(this).ifPresent(rewards -> rewards.addAll(items));
+            FishingHookAttachment.get(this).getRewards().addAll(items);
             if (FishingHookLogic.startStardewMinigame(player)) {
                 cir.cancel();
             }

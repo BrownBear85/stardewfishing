@@ -68,7 +68,7 @@ neoForge {
     }
 
     // This line is optional. Access Transformers are automatically detected
-    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -164,26 +164,28 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    // aquaculture 2
-    compileOnly "com.teammetallurgy.aquaculture:aquaculture2_${minecraft_version}:${minecraft_version}-${aquaculture_version}"
+    def include_tide = false
+    def include_aquaculture = false
+    def include_ndu = false
 
-    // nether depths
-//    compileOnly "blank:netherdepthsupgrade-3.1.5:1.20"
+    def tide = "blank:tide:${minecraft_version}"
+    if (include_tide) {
+        implementation tide
+        localRuntime "me.shedaniel.cloth:cloth-config-neoforge:${cloth_version}"
+    }
+    else compileOnly tide
 
-    // geckolib (for nether depths)
-//    localRuntime "software.bernie.geckolib:geckolib-forge-${minecraft_version}:4.4.6"
-//    localRuntime "com.eliotlash.mclib:mclib:20"
+    def aquaculture = "com.teammetallurgy.aquaculture:aquaculture2_${minecraft_version}:${minecraft_version}-${aquaculture_version}";
+    if (include_aquaculture) implementation aquaculture
+    else compileOnly aquaculture
 
-    // quality food
-    implementation "blank:1_21_1/quality_food-1.21.1:2.2.5"
+    if (include_ndu) {
+        localRuntime "blank:ndu:${minecraft_version}"
+        localRuntime "software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}"
+        localRuntime "com.eliotlash.mclib:mclib:20"
+    }
 
-    // tide
-    implementation "blank:1_21_1/tide-neoforge-1.21:1.6.3"
-
-    // cloth config (for tide)
-    localRuntime "me.shedaniel.cloth:cloth-config-neoforge:${cloth_version}"
-
-    // jei
+    implementation "blank:quality_food:${minecraft_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 

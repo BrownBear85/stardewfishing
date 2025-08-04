@@ -22,7 +22,7 @@ public class AttributeCache {
         AttributeMap playerAttributes = player.getAttributes();
 
         Map<Attribute, Double> cache = new HashMap<>();
-        playerAttributes.attributes.forEach((attribute, inst) -> cache.put(attribute, inst.getValue()));
+        playerAttributes.attributes.forEach((attribute, inst) -> cache.put(attribute.value(), inst.getValue()));
         CACHE_MAP.put(player, cache);
     }
 

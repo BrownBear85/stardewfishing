@@ -1,6 +1,6 @@
 {
   "values": [
-    "#minecraft:is_beach",
+    "#c:is_beach",
     "minecraft:ocean",
     "minecraft:deep_ocean",
     "minecraft:cold_ocean",

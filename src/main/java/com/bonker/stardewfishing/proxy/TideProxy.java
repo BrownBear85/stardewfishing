@@ -7,6 +7,7 @@ import com.li64.tide.registries.TideEntityTypes;
 import com.li64.tide.registries.entities.misc.fishing.HookAccessor;
 import com.li64.tide.registries.entities.misc.fishing.TideFishingHook;
 import com.li64.tide.registries.items.TideFishingRodItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -18,15 +19,15 @@ import java.util.List;
 
 public class TideProxy {
     public static void damageEquippedBobber(ItemStack fishingRod, ServerPlayer player) {
-        if (!CustomRodManager.hasBobber(fishingRod)) {
+        if (!CustomRodManager.hasBobber(fishingRod, player.registryAccess())) {
             return;
         }
-        FishingHookLogic.damageBobber(getBobber(fishingRod), player)
-                .ifPresent(b -> CustomRodManager.setBobber(fishingRod, b));
+        FishingHookLogic.damageBobber(getBobber(fishingRod, player.registryAccess()), player)
+                .ifPresent(b -> CustomRodManager.setBobber(fishingRod, b, player.registryAccess()));
     }
 
-    public static ItemStack getBobber(ItemStack fishingRod) {
-        return CustomRodManager.hasBobber(fishingRod) ? CustomRodManager.getBobber(fishingRod) : ItemStack.EMPTY;
+    public static ItemStack getBobber(ItemStack fishingRod, HolderLookup.Provider registryAccess) {
+        return CustomRodManager.hasBobber(fishingRod, registryAccess) ? CustomRodManager.getBobber(fishingRod, registryAccess) : ItemStack.EMPTY;
     }
 
     public static boolean isTideRod(ItemStack fishingRod) {
@@ -37,8 +38,8 @@ public class TideProxy {
         return stack.is(TideTags.Items.BOBBERS);
     }
 
-    public static void setBobber(ItemStack fishingRod, ItemStack bobber) {
-        CustomRodManager.setBobber(fishingRod, bobber);
+    public static void setBobber(ItemStack fishingRod, ItemStack bobber, HolderLookup.Provider registryAccess) {
+        CustomRodManager.setBobber(fishingRod, bobber, registryAccess);
     }
 
     public static FishingHook spawnHook(Player player, ItemStack fishingRod, Vec3 pos) {
@@ -55,17 +56,17 @@ public class TideProxy {
         return accessor;
     }
 
-    public static List<ItemStack> getAllModifierItems(ItemStack fishingRod) {
+    public static List<ItemStack> getAllModifierItems(ItemStack fishingRod, HolderLookup.Provider registryAccess) {
         List<ItemStack> modifiers = new ArrayList<>();
         modifiers.add(fishingRod);
-        if (CustomRodManager.hasBobber(fishingRod)) {
-            modifiers.add(CustomRodManager.getBobber(fishingRod));
+        if (CustomRodManager.hasBobber(fishingRod, registryAccess)) {
+            modifiers.add(CustomRodManager.getBobber(fishingRod, registryAccess));
         }
-        if (CustomRodManager.hasHook(fishingRod)) {
-            modifiers.add(CustomRodManager.getHook(fishingRod));
+        if (CustomRodManager.hasHook(fishingRod, registryAccess)) {
+            modifiers.add(CustomRodManager.getHook(fishingRod, registryAccess));
         }
-        if (CustomRodManager.hasLine(fishingRod)) {
-            modifiers.add(CustomRodManager.getLine(fishingRod));
+        if (CustomRodManager.hasLine(fishingRod, registryAccess)) {
+            modifiers.add(CustomRodManager.getLine(fishingRod, registryAccess));
         }
         return modifiers;
     }

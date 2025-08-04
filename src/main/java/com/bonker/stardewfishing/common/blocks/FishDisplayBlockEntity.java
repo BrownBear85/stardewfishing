@@ -2,6 +2,7 @@ package com.bonker.stardewfishing.common.blocks;
 
 import com.bonker.stardewfishing.common.init.SFBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
@@ -25,21 +26,21 @@ public class FishDisplayBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
 
         if (nbt.contains("displayed_item")) {
-            item = ItemStack.of(nbt.getCompound("displayed_item"));
+            item = ItemStack.parseOptional(registries, nbt.getCompound("displayed_item"));
         } else {
             item = ItemStack.EMPTY;
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
         if (!item.isEmpty()) {
-            nbt.put("displayed_item", item.save(new CompoundTag()));
+            nbt.put("displayed_item", item.save(registries));
         }
     }
 
@@ -49,9 +50,9 @@ public class FishDisplayBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = new CompoundTag();
-        saveAdditional(nbt);
+        saveAdditional(nbt, registries);
         return nbt;
     }
 }
