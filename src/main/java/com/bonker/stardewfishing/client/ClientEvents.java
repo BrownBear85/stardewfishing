@@ -3,6 +3,7 @@ package com.bonker.stardewfishing.client;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.init.SFBlockEntities;
+import com.bonker.stardewfishing.common.init.SFParticles;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
 import com.bonker.stardewfishing.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -14,12 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.ContainerScreenEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.sound.PlaySoundSourceEvent;
-import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
 
 public class ClientEvents {
     @EventBusSubscriber(modid = StardewFishing.MODID, value = Dist.CLIENT)
@@ -85,6 +82,11 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(SFBlockEntities.FISH_DISPLAY.get(), FishDisplayBER::new);
+        }
+
+        @SubscribeEvent
+        public static void onParticleRegistration(final RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(SFParticles.SPARKLE.get(), SparkleParticle.Provider::new);
         }
     }
 }

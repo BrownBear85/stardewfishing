@@ -3,11 +3,9 @@ package com.bonker.stardewfishing.common;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.client.RodTooltipHandler;
-import com.bonker.stardewfishing.client.SparkleParticle;
 import com.bonker.stardewfishing.common.init.SFAttributes;
 import com.bonker.stardewfishing.common.init.SFComponentTypes;
 import com.bonker.stardewfishing.common.init.SFItems;
-import com.bonker.stardewfishing.common.init.SFParticles;
 import com.bonker.stardewfishing.common.items.LegendaryCatch;
 import com.bonker.stardewfishing.common.networking.C2SCompleteMinigamePacket;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
@@ -25,7 +23,6 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -147,11 +144,6 @@ public class CommonEvents {
                 C2SCompleteMinigamePacket.STREAM_CODEC,
                 C2SCompleteMinigamePacket::handle
         );
-    }
-
-    @SubscribeEvent
-    public static void onParticleRegistration(final RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(SFParticles.SPARKLE.get(), SparkleParticle.Provider::new);
     }
 
     @SubscribeEvent
