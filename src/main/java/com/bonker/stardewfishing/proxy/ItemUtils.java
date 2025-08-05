@@ -24,7 +24,9 @@ public class ItemUtils {
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
             return TideProxy.getBobber(fishingRod, registryAccess);
         } else {
-            return fishingRod.getOrDefault(SFComponentTypes.BOBBER, ItemStack.EMPTY);
+            return fishingRod.has(SFComponentTypes.BOBBER) ?
+                    ItemStack.parseOptional(registryAccess, Objects.requireNonNull(fishingRod.get(SFComponentTypes.BOBBER))) :
+                    ItemStack.EMPTY;
         }
     }
 
@@ -54,7 +56,11 @@ public class ItemUtils {
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
             TideProxy.setBobber(fishingRod, bobber, registryAccess);
         } else {
-            fishingRod.set(SFComponentTypes.BOBBER, bobber);
+            if (bobber.isEmpty()) {
+                fishingRod.remove(SFComponentTypes.BOBBER);
+            } else {
+                fishingRod.set(SFComponentTypes.BOBBER, (CompoundTag) bobber.save(registryAccess, new CompoundTag()));
+            }
         }
     }
 

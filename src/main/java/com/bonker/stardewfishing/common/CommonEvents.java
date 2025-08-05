@@ -63,7 +63,7 @@ public class CommonEvents {
             return;
         }
 
-        ItemStack carried = event.getStackedOnItem();
+        ItemStack carried = event.getCarriedItem();
         ItemStack currentBobber = ItemUtils.getBobber(slotItem, event.getPlayer().registryAccess());
 
         if (ItemUtils.isBobber(carried)) {
