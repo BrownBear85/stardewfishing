@@ -66,21 +66,33 @@ public class CommonEvents {
         ItemStack carried = event.getCarriedItem();
         ItemStack currentBobber = ItemUtils.getBobber(slotItem, event.getPlayer().registryAccess());
 
+        boolean equipped = true;
         if (ItemUtils.isBobber(carried)) {
-            ItemUtils.setBobber(slotItem, carried.copy(), event.getPlayer().registryAccess());
-            event.getCarriedSlotAccess().set(currentBobber.copy());
-            event.setCanceled(true);
-
-            if (event.getPlayer().level().isClientSide && FMLEnvironment.dist.isClient()) {
-                RodTooltipHandler.addShake(event.getSlot(), true);
+            if (currentBobber.isEmpty()) {
+                ItemUtils.setBobber(slotItem, carried.copyWithCount(1), event.getPlayer().registryAccess());
+                event.getCarriedSlotAccess().get().shrink(1);
+                event.setCanceled(true);
+            } else if (carried.getCount() == 1) {
+                ItemUtils.setBobber(slotItem, carried.copyWithCount(1), event.getPlayer().registryAccess());
+                event.getCarriedSlotAccess().set(currentBobber.copy());
+                event.setCanceled(true);
+            } else if (ItemStack.isSameItemSameComponents(carried, currentBobber)) {
+                int transferAmount = Math.min(carried.getMaxStackSize() - carried.getCount(), currentBobber.getCount());
+                ItemUtils.setBobber(slotItem, currentBobber.copyWithCount(currentBobber.getCount() - transferAmount), event.getPlayer().registryAccess());
+                event.getCarriedSlotAccess().get().grow(transferAmount);
+                event.setCanceled(true);
+                equipped = false;
             }
         } else if (!currentBobber.isEmpty() && carried.isEmpty()) {
             ItemUtils.setBobber(slotItem, ItemStack.EMPTY, event.getPlayer().registryAccess());
             event.getCarriedSlotAccess().set(currentBobber.copy());
             event.setCanceled(true);
+            equipped = false;
+        }
 
+        if (event.isCanceled()) {
             if (event.getPlayer().level().isClientSide && FMLEnvironment.dist.isClient()) {
-                RodTooltipHandler.addShake(event.getSlot(), false);
+                RodTooltipHandler.addShake(event.getSlot(), equipped);
             }
         }
     }

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.mojang.math.Divisor;
 import it.unimi.dsi.fastutil.ints.IntIterator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
@@ -120,6 +121,7 @@ public class RenderUtil {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(x - (int) x, y - (int) y, 0);
         guiGraphics.renderItem(item, (int) x, (int) y);
+        guiGraphics.renderItemDecorations(Minecraft.getInstance().font, item, (int) x, (int) y);
         guiGraphics.pose().popPose();
     }
 }

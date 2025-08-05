@@ -51,14 +51,14 @@ public abstract class LavaFishingBobberEntityMixin extends FishingHook {
             timeUntilLured = Math.max(10, (int) (timeUntilLured * SFConfig.getBiteTimeMultiplier()));
         }
 
-        if (FishingHookAttachment.get(this).getRewards().isEmpty()) {
+        if (!FishingHookAttachment.get(this).getRewards().isEmpty()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "retrieve(Lnet/minecraft/world/item/ItemStack;)I",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraftforge/eventbus/api/IEventBus;post(Lnet/minecraftforge/eventbus/api/Event;)Z"),
+                    target = "Lnet/neoforged/bus/api/IEventBus;post(Lnet/neoforged/bus/api/Event;)Lnet/neoforged/bus/api/Event;"),
             cancellable = true)
     public void retrieve(ItemStack pStack, CallbackInfoReturnable<Integer> cir, @Local List<ItemStack> items) {
         ServerPlayer player = (ServerPlayer) getPlayerOwner();

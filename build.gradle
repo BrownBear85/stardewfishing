@@ -35,8 +35,7 @@ repositories {
         name = 'GeckoLib'
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content {
-            includeGroupByRegex("software\\.bernie.*")
-            includeGroup("com.eliotlash.mclib")
+            includeGroup("software.bernie.geckolib")
         }
     }
 
@@ -165,8 +164,9 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     def include_tide = false
-    def include_aquaculture = false
+    def include_aquaculture = true
     def include_ndu = false
+    def include_fishing_real = false
 
     def tide = "blank:tide:${minecraft_version}"
     if (include_tide) {
@@ -181,8 +181,11 @@ dependencies {
 
     if (include_ndu) {
         localRuntime "blank:ndu:${minecraft_version}"
-        localRuntime "software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}"
-        localRuntime "com.eliotlash.mclib:mclib:20"
+        localRuntime "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    }
+
+    if (include_fishing_real) {
+        implementation "blank:fishing_real:${minecraft_version}"
     }
 
     implementation "blank:quality_food:${minecraft_version}"

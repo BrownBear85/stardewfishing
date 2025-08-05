@@ -4,10 +4,12 @@ import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.teammetallurgy.aquaculture.api.AquacultureAPI;
 import com.teammetallurgy.aquaculture.api.fishing.Hooks;
 import com.teammetallurgy.aquaculture.entity.AquaFishingBobberEntity;
+import com.teammetallurgy.aquaculture.init.AquaDataComponents;
 import com.teammetallurgy.aquaculture.item.AquaFishingRodItem;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
@@ -34,6 +36,9 @@ public class AquacultureProxy {
     }
 
     public static void setBobber(ItemStack fishingRod, ItemStack bobber) {
+        if (!fishingRod.has(AquaDataComponents.ROD_INVENTORY)) {
+            fishingRod.set(AquaDataComponents.ROD_INVENTORY, ItemContainerContents.EMPTY);
+        }
         AquaFishingRodItem.getHandler(fishingRod).setStackInSlot(3, bobber);
     }
 
