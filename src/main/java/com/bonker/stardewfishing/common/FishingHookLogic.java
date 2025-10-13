@@ -2,7 +2,6 @@ package com.bonker.stardewfishing.common;
 
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
-import com.bonker.stardewfishing.common.init.SFAttachmentTypes;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
 import com.bonker.stardewfishing.proxy.ItemUtils;
@@ -11,6 +10,7 @@ import com.bonker.stardewfishing.server.AttributeCache;
 import com.bonker.stardewfishing.server.LockableList;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
 import com.bonker.stardewfishing.server.data.FishingHookAttachment;
+import com.bonker.stardewfishing.server.data.MinigameDisabledPlayers;
 import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.event.StardewMinigameEndedEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameModifyRewardsEvent;
@@ -40,7 +40,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayer;
@@ -53,14 +52,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class FishingHookLogic {
-    // todo: remove this, exists for backward compatibility with tide
-    @Deprecated(forRemoval = true, since = "3.0")
-    public static Optional<ArrayList<ItemStack>> getStoredRewards(FishingHook entity) {
-        return Optional.of(entity.getData(SFAttachmentTypes.HOOK).getRewards());
-    }
-
     public static boolean startStardewMinigame(ServerPlayer player) {
-        if (player.fishing == null || player instanceof FakePlayer) return false;
+        if (player.fishing == null || player instanceof FakePlayer ||
+                MinigameDisabledPlayers.get(player.server).isMinigameDisabled(player)) return false;
 
         FishingHookAttachment data = FishingHookAttachment.get(player.fishing);
 
@@ -133,18 +127,6 @@ public class FishingHookLogic {
         }
 
         AttributeCache.remove(player);
-    }
-
-    // todo: remove this, exists for backward compatibility with tide
-    @Deprecated(forRemoval = true, since = "3.0")
-    public static void modifyRewards(ServerPlayer player, double accuracy, @Nullable ItemStack fishingRod) {
-        modifyRewards(player, accuracy, 0);
-    }
-
-    // todo: remove this, exists for backward compatibility with tide
-    @Deprecated(forRemoval = true, since = "3.0")
-    public static void modifyRewards(List<ItemStack> rewards, double accuracy, @Nullable ItemStack fishingRod) {
-        modifyRewards(rewards, accuracy, 0);
     }
 
     public static void modifyRewards(ServerPlayer player, double accuracy, int qualityBoost) {

@@ -3,6 +3,7 @@ package com.bonker.stardewfishing.server;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.bonker.stardewfishing.proxy.ItemUtils;
+import com.bonker.stardewfishing.server.data.MinigameDisabledPlayers;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
 import com.bonker.stardewfishing.server.data.FishingHookAttachment;
 import com.mojang.brigadier.CommandDispatcher;
@@ -17,8 +18,10 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -51,7 +54,11 @@ public class SFCommands {
                 .requires(stack -> stack.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("start_minigame")
                         .then(Commands.argument("item", new FishBehaviorArgument(buildContext))
-                                        .executes(SFCommands::startMinigame))));
+                                        .executes(SFCommands::startMinigame)))
+                .then(Commands.literal("toggle_minigame")
+                        .executes(SFCommands::toggleMinigameSelf)
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .executes(SFCommands::toggleMinigame))));
     }
 
     private static int startMinigame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -73,6 +80,26 @@ public class SFCommands {
 
         FishingHookLogic.startStardewMinigame(context.getSource().getPlayerOrException());
         return 0;
+    }
+
+    private static int toggleMinigameSelf(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        doToggleMinigame(source, source.getPlayerOrException());
+        return 0;
+    }
+
+    private static int toggleMinigame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        doToggleMinigame(source, context.getArgument("player", EntitySelector.class).findSinglePlayer(source));
+        return 0;
+    }
+
+    private static void doToggleMinigame(CommandSourceStack source, ServerPlayer player) {
+        MinigameDisabledPlayers data = MinigameDisabledPlayers.get(source.getServer());
+        boolean disabled = data.isMinigameDisabled(player);
+        data.setMinigameDisabled(player, !disabled);
+
+        source.sendSuccess(() -> Component.translatable("commands.stardew_fishing." + (disabled ? "enabled" : "disabled") + "_minigame", player.getScoreboardName()), true);
     }
 
     public static class FishBehaviorArgument extends ItemArgument {
