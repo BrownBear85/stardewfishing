@@ -6,7 +6,8 @@
     "AquaFishingBobberEntityMixin",
     "FishingHookAccessor",
     "FishingHookMixin",
-    "LavaFishingBobberEntityMixin"
+    "LavaFishingBobberEntityMixin",
+    "PokeRodFishingBobberEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

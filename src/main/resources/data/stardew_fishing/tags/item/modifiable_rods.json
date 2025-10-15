@@ -4,6 +4,202 @@
     {
       "id": "netherdepthsupgrade:lava_fishing_rod",
       "required": false
+    },
+    {
+      "id": "cobblemon:great_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_origin_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:sport_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_wing_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:lure_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:master_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_great_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:repeat_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:dusk_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_ultra_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:dive_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_verdant_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:azure_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:roseate_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:fast_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:heal_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_gigaton_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:moon_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:beast_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:verdant_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_slate_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_ivory_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ultra_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:heavy_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:love_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_citrine_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:cherish_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:timer_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:safari_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:net_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:quick_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_jet_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:park_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_roseate_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_heavy_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:poke_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:slate_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:citrine_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:pokerod_smithing_template",
+      "required": false
+    },
+    {
+      "id": "cobblemon:level_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:luxury_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:friend_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_leaden_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_azure_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:nest_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:dream_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_poke_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:premier_rod",
+      "required": false
+    },
+    {
+      "id": "cobblemon:ancient_feather_rod",
+      "required": false
     }
   ]
 }

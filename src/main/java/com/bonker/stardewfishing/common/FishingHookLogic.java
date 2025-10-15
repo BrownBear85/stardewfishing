@@ -2,8 +2,11 @@ package com.bonker.stardewfishing.common;
 
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
+import com.bonker.stardewfishing.common.init.SFComponentTypes;
+import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
+import com.bonker.stardewfishing.proxy.CobblemonProxy;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.bonker.stardewfishing.proxy.QualityFoodProxy;
 import com.bonker.stardewfishing.server.AttributeCache;
@@ -173,36 +176,40 @@ public class FishingHookLogic {
 
         ServerLevel level = player.serverLevel();
         for (ItemStack reward : rewards) {
-            if (reward.is(ItemTags.FISHES)) {
-                player.awardStat(Stats.FISH_CAUGHT);
-            }
-
-            ItemEntity itementity;
-            if (data.getEvent().isLavaFishing()) {
-                itementity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), reward) {
-                    public boolean displayFireAnimation() {
-                        return false;
-                    }
-
-                    public void lavaHurt() {
-                    }
-                };
-            } else {
-                itementity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), reward);
-            }
-            double scale = 0.1;
-            double dx = player.getX() - hook.getX();
-            double dy = player.getY() - hook.getY();
-            double dz = player.getZ() - hook.getZ();
-            itementity.setDeltaMovement(dx * scale, dy * scale + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08, dz * scale);
-            level.addFreshEntity(itementity);
+            InteractionHand hand = getRodHand(player);
+            ItemStack handItem = hand != null ? player.getItemInHand(hand) : ItemStack.EMPTY;
+            CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, handItem, hook, rewards);
 
             int exp = (int) ((player.getRandom().nextInt(6) + 1) * SFConfig.getMultiplier(accuracy, player, data.getEvent().getExpMultiplier()));
             level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5, player.getZ() + 0.5, exp));
 
-            InteractionHand hand = getRodHand(player);
-            ItemStack handItem = hand != null ? player.getItemInHand(hand) : ItemStack.EMPTY;
-            CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, handItem, hook, rewards);
+            if (StardewFishing.COBBLEMON_INSTALLED && reward.is(SFItems.POKEMON_PLACEHOLDER)) {
+                CobblemonProxy.spawnPokemon(hook, player, reward.get(SFComponentTypes.POKEMON_TYPE), fishingRod);
+            } else {
+                if (reward.is(ItemTags.FISHES)) {
+                    player.awardStat(Stats.FISH_CAUGHT);
+                }
+
+                ItemEntity itementity;
+                if (data.getEvent().isLavaFishing()) {
+                    itementity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), reward) {
+                        public boolean displayFireAnimation() {
+                            return false;
+                        }
+
+                        public void lavaHurt() {
+                        }
+                    };
+                } else {
+                    itementity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), reward);
+                }
+                double scale = 0.1;
+                double dx = player.getX() - hook.getX();
+                double dy = player.getY() - hook.getY();
+                double dz = player.getZ() - hook.getZ();
+                itementity.setDeltaMovement(dx * scale, dy * scale + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08, dz * scale);
+                level.addFreshEntity(itementity);
+            }
         }
 
         player.level().playSound(null, player, SFSoundEvents.PULL_ITEM.get(), SoundSource.PLAYERS, 1.0F, 1.0F);

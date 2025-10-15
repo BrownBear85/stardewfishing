@@ -29,6 +29,7 @@ public class StardewFishing {
     public static final boolean QUALITY_FOOD_INSTALLED = ModList.get().isLoaded("quality_food");
     public static final boolean AQUACULTURE_INSTALLED = ModList.get().isLoaded("aquaculture");
     public static final boolean TIDE_INSTALLED = ModList.get().isLoaded("tide");
+    public static final boolean COBBLEMON_INSTALLED = ModList.get().isLoaded("cobblemon");
 
     public static final TagKey<Item> STARTS_MINIGAME = TagKey.create(Registries.ITEM, resource("starts_minigame"));
     public static final TagKey<Item> MODIFIABLE_RODS = TagKey.create(Registries.ITEM, resource("modifiable_rods"));

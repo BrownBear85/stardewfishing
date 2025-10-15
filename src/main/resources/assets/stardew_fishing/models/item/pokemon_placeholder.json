@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "stardew_fishing:item/pokemon_placeholder"
+  }
+}

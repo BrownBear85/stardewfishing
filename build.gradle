@@ -164,9 +164,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     def include_tide = false
-    def include_aquaculture = true
+    def include_aquaculture = false
     def include_ndu = false
     def include_fishing_real = false
+    def include_cobblemon = true
 
     def tide = "blank:tide:${minecraft_version}"
     if (include_tide) {
@@ -186,6 +187,11 @@ dependencies {
 
     if (include_fishing_real) {
         implementation "blank:fishing_real:${minecraft_version}"
+    }
+
+    if (include_cobblemon) {
+        implementation "blank:cobblemon:${minecraft_version}"
+        implementation "blank:kotlinforforge:${minecraft_version}"
     }
 
     implementation "blank:quality_food:${minecraft_version}"

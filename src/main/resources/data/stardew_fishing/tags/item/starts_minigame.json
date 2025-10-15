@@ -2,6 +2,7 @@
   "values": [
     "#minecraft:fishes",
     "#stardew_fishing:inedible_fishes",
-    "minecraft:barrier"
+    "minecraft:barrier",
+    "stardew_fishing:pokemon_placeholder"
   ]
 }
