@@ -88,7 +88,7 @@ public class RodTooltipHandler {
 
                 if (!hoveredLastTick) {
                     if (soundTimer == 0) {
-                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SFSoundEvents.DWOP.get(), 1.0F));
+                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SFSoundEvents.getDwop(true), 1.0F));
                         soundTimer = 4;
                     }
                     hoveredLastTick = true;
@@ -102,7 +102,7 @@ public class RodTooltipHandler {
 
                 if (hoveredLastTick) {
                     if (soundTimer == 0) {
-                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SFSoundEvents.DWOP_REVERSE.get(), 1.0F));
+                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SFSoundEvents.getDwop(false), 1.0F));
                     }
                     hoveredLastTick = false;
                 }

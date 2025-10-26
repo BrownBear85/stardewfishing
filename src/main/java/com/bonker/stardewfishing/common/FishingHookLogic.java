@@ -156,6 +156,18 @@ public class FishingHookLogic {
         AttributeCache.remove(player);
     }
 
+    // todo: remove this, exists for backward compatibility with tide
+    @Deprecated(forRemoval = true, since = "3.0")
+    public static void modifyRewards(ServerPlayer player, double accuracy, @Nullable ItemStack fishingRod) {
+        modifyRewards(player, accuracy, 0);
+    }
+
+    // todo: remove this, exists for backward compatibility with tide
+    @Deprecated(forRemoval = true, since = "3.0")
+    public static void modifyRewards(List<ItemStack> rewards, double accuracy, @Nullable ItemStack fishingRod) {
+        modifyRewards(rewards, accuracy, 0);
+    }
+
     public static void modifyRewards(ServerPlayer player, double accuracy, int qualityBoost) {
         if (player.fishing == null) return;
         getStoredRewards(player.fishing).ifPresent(rewards -> modifyRewards(rewards, accuracy, qualityBoost));

@@ -152,11 +152,11 @@ public class FishingMinigame {
 
         if (wasOnFish != bobberOnFish) {
             screen.stopReelingSounds();
-            screen.playSound((bobberOnFish ? SFSoundEvents.DWOP : SFSoundEvents.DWOP_REVERSE).get());
+            screen.playSound(SFSoundEvents.getDwop(bobberOnFish));
         }
 
         if (wasOnChest != bobberOnChest) {
-            screen.playSound((bobberOnChest ? SFSoundEvents.DWOP : SFSoundEvents.DWOP_REVERSE).get());
+            screen.playSound(SFSoundEvents.getDwop(bobberOnChest));
         }
 
         if (!bobberOnChest && chestTimer > 0 && chestTimer < TREASURE_CHEST_TIME) {

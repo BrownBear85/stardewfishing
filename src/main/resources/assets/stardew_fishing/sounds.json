@@ -19,6 +19,16 @@
       "stardew_fishing:dwop_reverse"
     ]
   },
+  "dwop_loud": {
+    "sounds": [
+      "stardew_fishing:dwop_loud"
+    ]
+  },
+  "dwop_reverse_loud": {
+    "sounds": [
+      "stardew_fishing:dwop_reverse_loud"
+    ]
+  },
   "equip": {
     "sounds": [
       "stardew_fishing:equip"
