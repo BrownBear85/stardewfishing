@@ -10,6 +10,7 @@ import com.bonker.stardewfishing.proxy.QualityFoodProxy;
 import com.bonker.stardewfishing.server.AttributeCache;
 import com.bonker.stardewfishing.server.LockableList;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
+import com.bonker.stardewfishing.server.data.MinigameDisabledPlayers;
 import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.event.StardewMinigameEndedEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameModifyRewardsEvent;
@@ -77,7 +78,8 @@ public class FishingHookLogic {
     }
 
     public static boolean startStardewMinigame(ServerPlayer player) {
-        if (player.fishing == null || player instanceof FakePlayer) return false;
+        if (player.fishing == null || player instanceof FakePlayer ||
+                MinigameDisabledPlayers.get(player.server).isMinigameDisabled(player)) return false;
 
         return player.fishing.getCapability(CapProvider.CAP).resolve().map(cap -> {
             // A minigame is already in progress
@@ -152,18 +154,6 @@ public class FishingHookLogic {
         }
 
         AttributeCache.remove(player);
-    }
-
-    // todo: remove this, exists for backward compatibility with tide
-    @Deprecated(forRemoval = true, since = "3.0")
-    public static void modifyRewards(ServerPlayer player, double accuracy, @Nullable ItemStack fishingRod) {
-        modifyRewards(player, accuracy, 0);
-    }
-
-    // todo: remove this, exists for backward compatibility with tide
-    @Deprecated(forRemoval = true, since = "3.0")
-    public static void modifyRewards(List<ItemStack> rewards, double accuracy, @Nullable ItemStack fishingRod) {
-        modifyRewards(rewards, accuracy, 0);
     }
 
     public static void modifyRewards(ServerPlayer player, double accuracy, int qualityBoost) {
