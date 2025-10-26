@@ -73,8 +73,8 @@
   "attribute.name.stardew_fishing.exp_multiplier": "Experience from Fishing",
   "commands.stardew_fishing.no_behavior": "There is no fish behavior associated with %s",
   "commands.stardew_fishing.no_rod": "You must be holding a fishing rod to start the minigame",
-  "commands.stardew_fishing.disabled_minigame": "Disabled the Stardew Fishing minigame for %s",
-  "commands.stardew_fishing.enabled_minigame": "Enabled the Stardew Fishing minigame for %s",
+  "commands.stardew_fishing.disabled_minigame": "Disabled the Stardew Fishing minigame",
+  "commands.stardew_fishing.enabled_minigame": "Enabled the Stardew Fishing minigame",
   "profile.item.stardew_fishing.goliath_grouper":"Description coming soon...",
   "profile.item.stardew_fishing.vampire_payara":"Description coming soon...",
   "profile.item.stardew_fishing.golden_snook":"Description coming soon...",
@@ -84,5 +84,7 @@
   "profile.item.stardew_fishing.storm_tarpon":"Description coming soon...",
   "profile.item.stardew_fishing.blazing_oarfish":"Description coming soon...",
   "profile.item.stardew_fishing.crystalline_snakehead":"Description coming soon...",
-  "profile.item.stardew_fishing.demon_gar":"Description coming soon..."
+  "profile.item.stardew_fishing.demon_gar":"Description coming soon...",
+  "key.categories.stardew_fishing": "Stardew Fishing",
+  "key.stardew_fishing.minigame_button": "Fishing Minigame Input"
 }
