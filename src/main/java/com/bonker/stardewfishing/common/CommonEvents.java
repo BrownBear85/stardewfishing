@@ -148,11 +148,6 @@ public class CommonEvents {
         }
 
         @SubscribeEvent
-        public static void onParticleRegistration(final RegisterParticleProvidersEvent event) {
-            event.registerSpriteSet(SFParticles.SPARKLE.get(), SparkleParticle.Provider::new);
-        }
-
-        @SubscribeEvent
         public static void onAttributeCreation(final EntityAttributeModificationEvent event) {
             event.add(EntityType.PLAYER, SFAttributes.LINE_STRENGTH.get());
             event.add(EntityType.PLAYER, SFAttributes.BAR_SIZE.get());
