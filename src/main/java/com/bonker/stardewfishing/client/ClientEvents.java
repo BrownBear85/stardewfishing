@@ -10,12 +10,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ContainerScreenEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,35 +50,36 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onSoundPlayed(final PlaySoundSourceEvent event) {
             try {
-                if (event.getSound() instanceof SimpleSoundInstance instance) {
-                    if (event.getSound().getLocation().getNamespace().equals("minecraft")) {
-                        SoundEvent newEvent = switch (event.getSound().getLocation().getPath()) {
-                            case "entity.fishing_bobber.throw" -> SFSoundEvents.CAST.get();
-                            case "entity.fishing_bobber.retrieve" -> {
-                                if (Minecraft.getInstance().level == null) yield null;
-                                Player player = Minecraft.getInstance().level.getNearestPlayer(event.getSound().getX(), event.getSound().getY(), event.getSound().getZ(), 1, false);
-                                yield player == null || player.fishing == null ? SFSoundEvents.PULL_ITEM.get() : SFSoundEvents.FISH_HIT.get();
-                            }
-                            case "entity.fishing_bobber.splash" -> SFSoundEvents.FISH_BITE.get();
-                            default -> null;
-                        };
-
-                        if (newEvent != null) {
-                            event.getEngine().stop(instance);
-                            event.getEngine().play(new SimpleSoundInstance(
-                                    newEvent,
-                                    instance.getSource(),
-                                    1.0F,
-                                    1.0F,
-                                    SoundInstance.createUnseededRandom(),
-                                    instance.getX(),
-                                    instance.getY(),
-                                    instance.getZ()));
+                SoundInstance instance = event.getSound();
+                SoundEvent newEvent = null;
+                if (instance instanceof SimpleSoundInstance && event.getSound().getLocation().getNamespace().equals("minecraft")) {
+                    switch (event.getSound().getLocation().getPath()) {
+                        case "entity.fishing_bobber.throw" -> newEvent = SFSoundEvents.CAST.get();
+                        case "entity.fishing_bobber.retrieve" -> {
+                            if (Minecraft.getInstance().level == null) break;
+                            Player player = Minecraft.getInstance().level.getNearestPlayer(event.getSound().getX(), event.getSound().getY(), event.getSound().getZ(), 1, false);
+                            newEvent = player == null || player.fishing == null ? SFSoundEvents.PULL_ITEM.get() : SFSoundEvents.FISH_HIT.get();
                         }
+                        case "entity.fishing_bobber.splash" -> newEvent = SFSoundEvents.FISH_BITE.get();
                     }
                 }
+
+                if (newEvent != null) {
+                    event.getEngine().stop(instance);
+                    event.getEngine().play(new SimpleSoundInstance(
+                            newEvent,
+                            SoundSource.MASTER,
+                            1.0F,
+                            1.0F,
+                            SoundInstance.createUnseededRandom(),
+                            instance.getX(),
+                            instance.getY(),
+                            instance.getZ()));
+                } else if (SFConfig.isolateAudioCues() && !event.getSound().getLocation().getNamespace().equals(StardewFishing.MODID) && Minecraft.getInstance().screen instanceof FishingScreen) {
+                    event.getEngine().stop(instance);
+                }
             } catch (Exception e) {
-                StardewFishing.LOGGER.error("An exception occurred while trying to replace a sound event. I think this happens when you try to use a fishing rod in extremely laggy conditions.", e);
+                StardewFishing.LOGGER.error("An exception occurred while trying to replace a sound event.", e);
             }
         }
     }
@@ -95,6 +94,11 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onParticleRegistration(final RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(SFParticles.SPARKLE.get(), SparkleParticle.Provider::new);
+        }
+
+        @SubscribeEvent
+        public static void onRegisterKeyBindings(RegisterKeyMappingsEvent event) {
+            event.register(StardewFishingClient.MINIGAME_BUTTON.get());
         }
     }
 }

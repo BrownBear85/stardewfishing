@@ -83,5 +83,7 @@
   "profile.item.stardew_fishing.storm_tarpon":"Description coming soon...",
   "profile.item.stardew_fishing.blazing_oarfish":"Description coming soon...",
   "profile.item.stardew_fishing.crystalline_snakehead":"Description coming soon...",
-  "profile.item.stardew_fishing.demon_gar":"Description coming soon..."
+  "profile.item.stardew_fishing.demon_gar":"Description coming soon...",
+  "key.categories.stardew_fishing": "Stardew Fishing",
+  "key.stardew_fishing.minigame_button": "Fishing Minigame Input"
 }

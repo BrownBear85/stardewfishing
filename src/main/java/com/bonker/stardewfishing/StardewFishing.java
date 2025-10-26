@@ -69,6 +69,7 @@ public class StardewFishing {
         SFLootPoolEntryTypes.LOOT_POOL_ENTRY_TYPES.register(bus);
 
         context.registerConfig(ModConfig.Type.SERVER, SFConfig.SERVER_SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, SFConfig.CLIENT_SPEC);
     }
     
     public static ResourceLocation resource(String path) {

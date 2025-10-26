@@ -10,6 +10,7 @@ import com.bonker.stardewfishing.common.networking.C2SCompleteMinigamePacket;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
 import com.bonker.stardewfishing.common.networking.SFNetworking;
 import com.bonker.stardewfishing.proxy.ItemUtils;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,6 +20,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
@@ -54,7 +56,7 @@ public class FishingScreen extends Screen {
     private int leftPos, topPos;
     private Status status = Status.HIT_TEXT;
     private double accuracy = -1;
-    private boolean mouseDown = false;
+    private boolean inputDown = false;
     private int animationTimer = 0;
     private boolean gotChest = false;
     private boolean goldenChest = false;
@@ -186,9 +188,8 @@ public class FishingScreen extends Screen {
                 RenderUtil.fillF(pGuiGraphics, leftPos + 33, topPos + 148, leftPos + 37, topPos + 148 - progress * 145, 0, color);
 
                 // draw handle
-                RenderUtil.drawRotatedAround(poseStack, handleRot.getInterpolated(partialTick), leftPos + 6.5F, topPos + 130.5F, () -> {
-                    pGuiGraphics.blit(texture, leftPos + 5, topPos + 129, 47, 0, 8, 3);
-                });
+                RenderUtil.drawRotatedAround(poseStack, handleRot.getInterpolated(partialTick), leftPos + 6.5F, topPos + 130.5F, () ->
+                        pGuiGraphics.blit(texture, leftPos + 5, topPos + 129, 47, 0, 8, 3));
 
                 // render PERFECT!
                 if (status == Status.SUCCESS && accuracy == 1) {
@@ -213,6 +214,13 @@ public class FishingScreen extends Screen {
     protected void init() {
         leftPos = (width - GUI_WIDTH) / 2;
         topPos = (height - GUI_HEIGHT) / 2;
+
+        if (minecraft != null && SFConfig.isolateAudioCues()) {
+            for (SoundSource category : SoundSource.values()) {
+                if (category == SoundSource.MASTER) continue;
+                minecraft.getSoundManager().stop(null, category);
+            }
+        }
     }
 
     @Override
@@ -238,7 +246,7 @@ public class FishingScreen extends Screen {
                 }
             }
             case MINIGAME -> {
-                minigame.tick(mouseDown);
+                minigame.tick(inputDown);
 
                 boolean onFish = minigame.isBobberOnFish();
 
@@ -287,15 +295,19 @@ public class FishingScreen extends Screen {
 
                 if (reelSoundTimer == -1 || --reelSoundTimer == 0) {
                     reelSoundTimer = onFish ? REEL_FAST_LENGTH : REEL_SLOW_LENGTH;
-                    playSound(onFish ? SFSoundEvents.REEL_FAST.get() : SFSoundEvents.REEL_SLOW.get());
+                    if (!SFConfig.isolateAudioCues()) {
+                        playSound(onFish ? SFSoundEvents.REEL_FAST.get() : SFSoundEvents.REEL_SLOW.get());
+                    }
                 }
 
                 if (creakSoundTimer > 0) {
                     creakSoundTimer--;
                 }
-                if (mouseDown && creakSoundTimer == 0) {
+                if (inputDown && creakSoundTimer == 0) {
                     creakSoundTimer = CREAK_LENGTH;
-                    playSound(SFSoundEvents.REEL_CREAK.get());
+                    if (!SFConfig.isolateAudioCues()) {
+                        playSound(SFSoundEvents.REEL_CREAK.get());
+                    }
                 }
             }
             case SUCCESS, FAILURE -> {
@@ -326,27 +338,56 @@ public class FishingScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        if (status == Status.MINIGAME && pButton == GLFW.GLFW_MOUSE_BUTTON_1 || pButton == GLFW.GLFW_MOUSE_BUTTON_2) {
-            if (!mouseDown) {
-                playSound(SFSoundEvents.REEL_CREAK.get());
-                mouseDown = true;
+        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.MOUSE &&
+                pButton == StardewFishingClient.MINIGAME_BUTTON.get().getKey().getValue()) {
+            if (status == Status.MINIGAME) {
+                setInputDown(true);
+                return true;
             }
-            return true;
-        } else {
-            return super.mouseClicked(pMouseX, pMouseY, pButton);
         }
+
+        return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 
     @Override
     public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
-        if (pButton == GLFW.GLFW_MOUSE_BUTTON_1 || pButton == GLFW.GLFW_MOUSE_BUTTON_2) {
-            if (mouseDown) {
-                mouseDown = false;
-            }
-            return true;
-        } else {
-            return super.mouseReleased(pMouseX, pMouseY, pButton);
+        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.MOUSE &&
+                pButton == StardewFishingClient.MINIGAME_BUTTON.get().getKey().getValue()) {
+            setInputDown(false);
         }
+
+        return super.mouseReleased(pMouseX, pMouseY, pButton);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.KEYSYM &&
+                keyCode == StardewFishingClient.MINIGAME_BUTTON.get().getKey().getValue()) {
+            if (status == Status.MINIGAME) {
+                setInputDown(true);
+                return true;
+            }
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.KEYSYM &&
+                keyCode == StardewFishingClient.MINIGAME_BUTTON.get().getKey().getValue()) {
+            setInputDown(false);
+        }
+
+        return super.keyReleased(keyCode, scanCode, modifiers);
+    }
+
+    public void setInputDown(boolean down) {
+        if (down && !inputDown && !SFConfig.isolateAudioCues()) {
+            playSound(SFSoundEvents.REEL_CREAK.get());
+        }
+
+        inputDown = down;
     }
 
     @Override
@@ -391,11 +432,14 @@ public class FishingScreen extends Screen {
     }
 
     public void playSound(SoundEvent soundEvent) {
+        if (minecraft == null) return;
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, 1.0F));
     }
 
     public void stopReelingSounds() {
         reelSoundTimer = 1;
+
+        if (minecraft == null) return;
 
         minecraft.getSoundManager().stop(SFSoundEvents.REEL_FAST.getId(), null);
         minecraft.getSoundManager().stop(SFSoundEvents.REEL_SLOW.getId(), null);
