@@ -182,20 +182,20 @@ dependencies {
     compileOnly fg.deobf("com.teammetallurgy.aquaculture:aquaculture2_${minecraft_version}:${minecraft_version}-2.5.2")
 
     // nether depths
-    compileOnly fg.deobf("blank:netherdepthsupgrade-3.1.5:1.20")
+    //compileOnly fg.deobf("blank:ndu:${minecraft_version}")
 
     // geckolib (for nether depths)
     //runtimeOnly fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:4.4.6")
     //runtimeOnly("com.eliotlash.mclib:mclib:20")
 
     // quality food
-    implementation fg.deobf("blank:quality_food-1.20.1:1.7.3-all")
+    implementation fg.deobf("blank:quality_food:${minecraft_version}")
 
     // tide
-    implementation fg.deobf("blank:tide-forge-1.20.1:1.6.2")
+    compileOnly fg.deobf("blank:tide:${minecraft_version}")
 
     // cloth config (for tide)
-    runtimeOnly(fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136"))
+    //runtimeOnly(fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136"))
 
     // jei
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
