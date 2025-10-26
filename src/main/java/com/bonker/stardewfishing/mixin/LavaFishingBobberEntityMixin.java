@@ -50,7 +50,7 @@ public abstract class LavaFishingBobberEntityMixin extends FishingHook {
             timeUntilLured = Math.max(10, (int) (timeUntilLured * SFConfig.getBiteTimeMultiplier()));
         }
 
-        if (FishingHookLogic.getStoredRewards(this).isEmpty()) {
+        if (FishingHookLogic.getStoredRewards(this).map(list -> !list.isEmpty()).orElse(false)) {
             ci.cancel();
         }
     }

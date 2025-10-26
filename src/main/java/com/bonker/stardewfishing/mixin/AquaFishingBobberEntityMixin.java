@@ -57,7 +57,7 @@ public abstract class AquaFishingBobberEntityMixin extends FishingHook implement
             setTimeUntilLured(time);
         }
 
-        if (FishingHookLogic.getStoredRewards(this).isEmpty()) {
+        if (FishingHookLogic.getStoredRewards(this).map(list -> !list.isEmpty()).orElse(false)) {
             ci.cancel();
         }
     }
