@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,11 @@ public class LegendaryFishModifier implements IGlobalLootModifier {
     public @NotNull ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         if (generatedLoot.isEmpty()) {
             // definitely no fish to replace
+            return generatedLoot;
+        }
+
+        if (!context.hasParam(LootContextParams.ORIGIN)) {
+            // no way to tell where the fish was caught
             return generatedLoot;
         }
 
