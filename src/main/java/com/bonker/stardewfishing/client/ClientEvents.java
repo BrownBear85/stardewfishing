@@ -14,7 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -48,7 +48,11 @@ public class ClientEvents {
         }
 
         @SubscribeEvent
-        public static void onSoundPlayed(final PlaySoundSourceEvent event) {
+        public static void onSoundPlayed(final PlaySoundEvent event) {
+            if (event.getSound() == null) {
+                return;
+            }
+
             try {
                 SoundInstance instance = event.getSound();
                 SoundEvent newEvent = null;
@@ -65,8 +69,7 @@ public class ClientEvents {
                 }
 
                 if (newEvent != null) {
-                    event.getEngine().stop(instance);
-                    event.getEngine().play(new SimpleSoundInstance(
+                    event.setSound(new SimpleSoundInstance(
                             newEvent,
                             SoundSource.MASTER,
                             1.0F,
@@ -76,7 +79,7 @@ public class ClientEvents {
                             instance.getY(),
                             instance.getZ()));
                 } else if (SFConfig.isolateAudioCues() && !event.getSound().getLocation().getNamespace().equals(StardewFishing.MODID) && Minecraft.getInstance().screen instanceof FishingScreen) {
-                    event.getEngine().stop(instance);
+                    event.setSound(null);
                 }
             } catch (Exception e) {
                 StardewFishing.LOGGER.error("An exception occurred while trying to replace a sound event.", e);
