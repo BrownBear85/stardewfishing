@@ -9,7 +9,6 @@ import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
 import com.bonker.stardewfishing.proxy.CobblemonProxy;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.bonker.stardewfishing.proxy.QualityFoodProxy;
-import com.bonker.stardewfishing.server.AttributeCache;
 import com.bonker.stardewfishing.server.LockableList;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
 import com.bonker.stardewfishing.server.data.FishingHookAttachment;
@@ -86,8 +85,6 @@ public class FishingHookLogic {
             fluid = player.level().getBlockState(pos.below()).getFluidState();
         }
 
-        AttributeCache.add(player);
-
         ItemStack fishingRod = player.getItemInHand(rodHand);
         StardewMinigameStartedEvent startEvent = new StardewMinigameStartedEvent(player, player.fishing, fishingRod, fish, FishBehaviorReloadListener.getBehavior(fish), fluid.is(FluidTags.LAVA));
 
@@ -99,9 +96,10 @@ public class FishingHookLogic {
         NeoForge.EVENT_BUS.post(startEvent);
 
         double chestChance = SFConfig.getTreasureChestChance() + startEvent.getTreasureChanceBonus();
+        double goldenChance = SFConfig.getGoldenChestChance() + startEvent.getGoldenChanceBonus();
         if (startEvent.isForcedTreasureChest() || player.getRandom().nextFloat() < chestChance) {
             data.setTreasureChest(true);
-            if (startEvent.isForcedGoldenChest() || player.getRandom().nextFloat() < SFConfig.getGoldenChestChance()) {
+            if (startEvent.isForcedGoldenChest() || player.getRandom().nextFloat() < goldenChance) {
                 data.setGoldenChest(true);
             }
         }
@@ -128,8 +126,6 @@ public class FishingHookLogic {
         if (player.fishing != null) {
             player.fishing.discard();
         }
-
-        AttributeCache.remove(player);
     }
 
     public static void modifyRewards(ServerPlayer player, double accuracy, int qualityBoost) {
@@ -180,7 +176,7 @@ public class FishingHookLogic {
             ItemStack handItem = hand != null ? player.getItemInHand(hand) : ItemStack.EMPTY;
             CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, handItem, hook, rewards);
 
-            int exp = (int) ((player.getRandom().nextInt(6) + 1) * SFConfig.getMultiplier(accuracy, player, data.getEvent().getExpMultiplier()));
+            int exp = (int) ((player.getRandom().nextInt(6) + 1) * SFConfig.getMultiplier(accuracy, data.getEvent().getExpMultiplier()));
             level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5, player.getZ() + 0.5, exp));
 
             if (StardewFishing.COBBLEMON_INSTALLED && reward.is(SFItems.POKEMON_PLACEHOLDER)) {

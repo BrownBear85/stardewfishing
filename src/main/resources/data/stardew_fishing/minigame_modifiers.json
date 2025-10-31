@@ -94,6 +94,9 @@
     },
     "tide:iron_fishing_hook": {
       "line_strength": "x1.2"
+    },
+    "tide:fortune_line": {
+      "golden_chance_bonus": "+0.1"
     }
   }
 }

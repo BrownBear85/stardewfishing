@@ -61,7 +61,6 @@ public class StardewFishing {
 
         SFItems.ITEMS.register(bus);
         SFBlocks.BLOCKS.register(bus);
-        SFAttributes.ATTRIBUTES.register(bus);
         SFCommands.ARGUMENT_TYPES.register(bus);
         SFItems.CREATIVE_MODE_TABS.register(bus);
         SFParticles.PARTICLE_TYPES.register(bus);

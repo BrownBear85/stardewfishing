@@ -3,7 +3,6 @@ package com.bonker.stardewfishing.common;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.client.RodTooltipHandler;
-import com.bonker.stardewfishing.common.init.SFAttributes;
 import com.bonker.stardewfishing.common.init.SFComponentTypes;
 import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.items.LegendaryCatch;
@@ -16,7 +15,6 @@ import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -26,7 +24,6 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -156,13 +153,5 @@ public class CommonEvents {
                 C2SCompleteMinigamePacket.STREAM_CODEC,
                 C2SCompleteMinigamePacket::handle
         );
-    }
-
-    @SubscribeEvent
-    public static void onAttributeCreation(final EntityAttributeModificationEvent event) {
-        event.add(EntityType.PLAYER, SFAttributes.LINE_STRENGTH);
-        event.add(EntityType.PLAYER, SFAttributes.BAR_SIZE);
-        event.add(EntityType.PLAYER, SFAttributes.TREASURE_CHANCE_BONUS);
-        event.add(EntityType.PLAYER, SFAttributes.EXPERIENCE_MULTIPLIER);
     }
 }

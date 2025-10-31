@@ -1,10 +1,9 @@
 package com.bonker.stardewfishing.server.event;
 
 import com.bonker.stardewfishing.common.FishBehavior;
-import com.bonker.stardewfishing.common.init.SFAttributes;
 import com.bonker.stardewfishing.proxy.ItemUtils;
-import com.bonker.stardewfishing.server.AttributeCache;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 
@@ -19,6 +18,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     private double lineStrength;
     private int barSize;
     private double treasureChanceBonus;
+    private double goldenChestBonus;
     private double expMultiplier;
     private boolean forcedTreasureChest = false;
     private boolean forcedGoldenChest = false;
@@ -35,10 +35,10 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
         this.downAcceleration = behavior.downAcceleration();
         this.avgDistance = behavior.avgDistance();
         this.moveVariation = behavior.moveVariation();
-        this.lineStrength = AttributeCache.getAttribute(player, SFAttributes.LINE_STRENGTH.get());
-        this.barSize = (int) AttributeCache.getAttribute(player, SFAttributes.BAR_SIZE.get());
-        this.treasureChanceBonus = AttributeCache.getAttribute(player, SFAttributes.TREASURE_CHANCE_BONUS.get());
-        this.expMultiplier = AttributeCache.getAttribute(player, SFAttributes.EXPERIENCE_MULTIPLIER.get());
+        this.lineStrength = 0;
+        this.barSize = 36;
+        this.treasureChanceBonus = 0;
+        this.expMultiplier = 1;
         this.lavaFishing = lavaFishing;
 
         // according to the minecraft wiki, each level of luck grants a 2.1% higher chance of treasure
@@ -55,7 +55,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setIdleTime(int idleTime) {
-        this.idleTime = idleTime;
+        this.idleTime = Math.max(idleTime, 0);
     }
 
     public float getTopSpeed() {
@@ -63,7 +63,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setTopSpeed(float topSpeed) {
-        this.topSpeed = topSpeed;
+        this.topSpeed = Math.max(topSpeed, 0);
     }
 
     public float getUpAcceleration() {
@@ -71,7 +71,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setUpAcceleration(float upAcceleration) {
-        this.upAcceleration = upAcceleration;
+        this.upAcceleration = Math.max(upAcceleration, 0);
     }
 
     public float getDownAcceleration() {
@@ -79,7 +79,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setDownAcceleration(float downAcceleration) {
-        this.downAcceleration = downAcceleration;
+        this.downAcceleration = Math.max(downAcceleration, 0);
     }
 
     public int getAvgDistance() {
@@ -87,7 +87,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setAvgDistance(int avgDistance) {
-        this.avgDistance = avgDistance;
+        this.avgDistance = Mth.clamp(avgDistance, 1, 126);
     }
 
     public int getMoveVariation() {
@@ -95,7 +95,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setMoveVariation(int moveVariation) {
-        this.moveVariation = moveVariation;
+        this.moveVariation = Math.max(moveVariation, 0);
     }
 
     public double getLineStrength() {
@@ -103,7 +103,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setLineStrength(double lineStrength) {
-        this.lineStrength = lineStrength;
+        this.lineStrength = Mth.clamp(lineStrength, 0, 1);
     }
 
     public int getBarSize() {
@@ -111,7 +111,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setBarSize(int barSize) {
-        this.barSize = barSize;
+        this.barSize = Mth.clamp(barSize, 4, 142);
     }
 
     public double getTreasureChanceBonus() {
@@ -119,7 +119,15 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setTreasureChanceBonus(double treasureChanceBonus) {
-        this.treasureChanceBonus = treasureChanceBonus;
+        this.treasureChanceBonus = Mth.clamp(treasureChanceBonus, 0, 1);
+    }
+
+    public double getGoldenChanceBonus() {
+        return goldenChestBonus;
+    }
+
+    public void setGoldenChanceBonus(double goldenChestBonus) {
+        this.goldenChestBonus = Mth.clamp(goldenChestBonus, 0, 1);
     }
 
     public double getExpMultiplier() {
@@ -127,7 +135,7 @@ public class StardewMinigameStartedEvent extends StardewMinigameEvent {
     }
 
     public void setExpMultiplier(double expMultiplier) {
-        this.expMultiplier = expMultiplier;
+        this.expMultiplier = Math.max(expMultiplier, 0);
     }
 
     public boolean isForcedTreasureChest() {
