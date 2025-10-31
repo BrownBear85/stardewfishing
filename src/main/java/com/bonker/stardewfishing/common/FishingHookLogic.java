@@ -250,11 +250,13 @@ public class FishingHookLogic {
         if (!bobber.isDamageableItem()) {
             return Optional.empty();
         }
+
+        ItemStack bobberCache = bobber.copy();
         bobber.hurtAndBreak(1, player.serverLevel(), player, p -> {
             player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS);
             Vec3 particlePos = player.getEyePosition().add(player.getLookAngle());
-            player.serverLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobber), particlePos.x(), particlePos.y(), particlePos.z(), 15, 0.1, 0.1, 0.1, 0.1);
-            player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobber.getDisplayName()), true);
+            player.serverLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobberCache), particlePos.x(), particlePos.y(), particlePos.z(), 15, 0.1, 0.1, 0.1, 0.1);
+            player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobberCache.getDisplayName()), true);
         });
         return Optional.of(bobber);
     }
