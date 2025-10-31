@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import org.jetbrains.annotations.NotNull;
@@ -52,13 +52,13 @@ public class LegendaryFishModifier implements IGlobalLootModifier {
             return generatedLoot;
         }
 
-        if (!context.hasParam(LootContextParams.ORIGIN)) {
-            // no way to tell where the fish was caught
+        if (context.getRandom().nextFloat() >= SFConfig.getLegendaryFishChance(context.getLuck())) {
+            // didn't get lucky
             return generatedLoot;
         }
 
-        if (context.getRandom().nextFloat() >= SFConfig.getLegendaryFishChance(context.getLuck())) {
-            // didn't get lucky
+        if (LootContextParamSets.FISHING.getRequired().stream().anyMatch(param -> !context.hasParam(param))) {
+            // not a fishing loot context
             return generatedLoot;
         }
 
