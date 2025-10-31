@@ -44,6 +44,7 @@ public final class MinigameModifiers {
         event.setLineStrength(modifierMap.get(Type.LINE_STRENGTH).apply(event.getLineStrength()));
         event.setBarSize(modifierMap.get(Type.BAR_SIZE).apply(event.getBarSize()));
         event.setTreasureChanceBonus(modifierMap.get(Type.TREASURE_CHANCE_BONUS).apply(event.getTreasureChanceBonus()));
+        event.setGoldenChanceBonus(modifierMap.get(Type.GOLDEN_CHANCE_BONUS).apply(event.getGoldenChanceBonus()));
         event.setExpMultiplier(modifierMap.get(Type.EXP_MULTIPLIER).apply(event.getExpMultiplier()));
         event.setQualityBoost(modifierMap.get(Type.QUALITY_BOOST).apply(event.getQualityBoost()));
     }
@@ -95,8 +96,8 @@ public final class MinigameModifiers {
     }
 
     public static final Codec<MinigameModifiers> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            m(0), m(1), m(2), m(3), m(4), m(5), m(6), m(7), m(8), m(9), m(10)
-    ).apply(inst, MinigameModifiers::new));;
+            m(0), m(1), m(2), m(3), m(4), m(5), m(6), m(7), m(8), m(9), m(10), m(11)
+    ).apply(inst, MinigameModifiers::new));
 
 
     private static RecordCodecBuilder<MinigameModifiers, ModifierOperation> m(int i) {
@@ -105,11 +106,11 @@ public final class MinigameModifiers {
 
     public enum Type {
         IDLE_TIME, TOP_SPEED, UP_ACCELERATION, DOWN_ACCELERATION, AVG_DISTANCE, MOVE_VARIATION,
-        LINE_STRENGTH, BAR_SIZE, TREASURE_CHANCE_BONUS, EXP_MULTIPLIER, QUALITY_BOOST;
+        LINE_STRENGTH, BAR_SIZE, TREASURE_CHANCE_BONUS, GOLDEN_CHANCE_BONUS, EXP_MULTIPLIER, QUALITY_BOOST;
 
         public boolean higherIsBetter() {
             return switch (this) {
-                case IDLE_TIME, LINE_STRENGTH, BAR_SIZE, TREASURE_CHANCE_BONUS, EXP_MULTIPLIER, QUALITY_BOOST -> true;
+                case IDLE_TIME, LINE_STRENGTH, BAR_SIZE, TREASURE_CHANCE_BONUS, GOLDEN_CHANCE_BONUS, EXP_MULTIPLIER, QUALITY_BOOST -> true;
                 default -> false;
             };
         }
@@ -120,7 +121,7 @@ public final class MinigameModifiers {
                 case AVG_DISTANCE, MOVE_VARIATION, BAR_SIZE -> PIXELS;
                 case TOP_SPEED -> PIXELS_PER_SECOND;
                 case UP_ACCELERATION, DOWN_ACCELERATION -> PIXELS_PER_SECOND_SQUARED;
-                case LINE_STRENGTH, TREASURE_CHANCE_BONUS, EXP_MULTIPLIER -> PERCENT;
+                case LINE_STRENGTH, TREASURE_CHANCE_BONUS, GOLDEN_CHANCE_BONUS, EXP_MULTIPLIER -> PERCENT;
                 case QUALITY_BOOST -> TIERS;
             };
         }

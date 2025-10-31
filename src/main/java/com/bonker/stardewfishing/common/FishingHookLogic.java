@@ -7,7 +7,6 @@ import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
 import com.bonker.stardewfishing.common.networking.SFNetworking;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.bonker.stardewfishing.proxy.QualityFoodProxy;
-import com.bonker.stardewfishing.server.AttributeCache;
 import com.bonker.stardewfishing.server.LockableList;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
 import com.bonker.stardewfishing.server.data.MinigameDisabledPlayers;
@@ -107,8 +106,6 @@ public class FishingHookLogic {
                 fluid = player.level().getBlockState(pos.below()).getFluidState();
             }
 
-            AttributeCache.add(player);
-
             ItemStack fishingRod = player.getItemInHand(rodHand);
             StardewMinigameStartedEvent startEvent = new StardewMinigameStartedEvent(player, player.fishing, fishingRod, fish, FishBehaviorReloadListener.getBehavior(fish), fluid.is(FluidTags.LAVA));
 
@@ -122,9 +119,10 @@ public class FishingHookLogic {
             cap.event = startEvent;
 
             double chestChance = SFConfig.getTreasureChestChance() + startEvent.getTreasureChanceBonus();
+            double goldenChance = SFConfig.getGoldenChestChance() + startEvent.getGoldenChanceBonus();
             if (startEvent.isForcedTreasureChest() || player.getRandom().nextFloat() < chestChance) {
                 cap.treasureChest = true;
-                if (startEvent.isForcedGoldenChest() || player.getRandom().nextFloat() < SFConfig.getGoldenChestChance()) {
+                if (startEvent.isForcedGoldenChest() || player.getRandom().nextFloat() < goldenChance) {
                     cap.goldenChest = true;
                 }
             }
@@ -152,8 +150,6 @@ public class FishingHookLogic {
         if (player.fishing != null) {
             player.fishing.discard();
         }
-
-        AttributeCache.remove(player);
     }
 
     // todo: remove this, exists for backward compatibility with tide
@@ -243,7 +239,7 @@ public class FishingHookLogic {
                 itementity.setDeltaMovement(dx * scale, dy * scale + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08, dz * scale);
                 level.addFreshEntity(itementity);
 
-                int exp = (int) ((player.getRandom().nextInt(6) + 1) * SFConfig.getMultiplier(accuracy, player, cap.event.getExpMultiplier()));
+                int exp = (int) ((player.getRandom().nextInt(6) + 1) * SFConfig.getMultiplier(accuracy, cap.event.getExpMultiplier()));
                 level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5, player.getZ() + 0.5, exp));
 
                 InteractionHand hand = getRodHand(player);

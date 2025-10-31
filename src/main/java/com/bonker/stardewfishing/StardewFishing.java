@@ -60,7 +60,6 @@ public class StardewFishing {
 
         SFItems.ITEMS.register(bus);
         SFBlocks.BLOCKS.register(bus);
-        SFAttributes.ATTRIBUTES.register(bus);
         SFItems.CREATIVE_MODE_TABS.register(bus);
         SFParticles.PARTICLE_TYPES.register(bus);
         SFSoundEvents.SOUND_EVENTS.register(bus);

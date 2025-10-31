@@ -1,8 +1,5 @@
 package com.bonker.stardewfishing;
 
-import com.bonker.stardewfishing.common.init.SFAttributes;
-import com.bonker.stardewfishing.server.AttributeCache;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 
@@ -99,7 +96,7 @@ public class SFConfig {
         return 0;
     }
 
-    public static double getMultiplier(double accuracy, Player player, double expMultiplierStat) {
+    public static double getMultiplier(double accuracy, double expMultiplierStat) {
         double multiplier = switch (getQuality(accuracy)) {
             case 3 -> QUALITY_3_MULTIPLIER.get();
             case 2 -> QUALITY_2_MULTIPLIER.get();
@@ -108,7 +105,6 @@ public class SFConfig {
         };
 
         multiplier *= expMultiplierStat;
-        multiplier *= AttributeCache.getAttribute(player, SFAttributes.EXPERIENCE_MULTIPLIER.get());
 
         return multiplier;
     }
