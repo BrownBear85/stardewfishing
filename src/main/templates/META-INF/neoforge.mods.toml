@@ -39,7 +39,7 @@ displayName="${mod_name}" #mandatory
 #logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-credits="Credits for the concept and sound effects goes to https://twitter.com/concernedape" #optional
+credits="Credit for the concept and many sound effects: https://twitter.com/concernedape. Credit for the Simplified Chinese translation: Pau1am. Credit for the Russian Translation: TaZ1k_." #optional
 
 # A text field displayed in the mod UI
 authors="${mod_authors}" #optional
