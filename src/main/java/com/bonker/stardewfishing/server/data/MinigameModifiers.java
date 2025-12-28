@@ -5,6 +5,7 @@ import com.bonker.stardewfishing.server.ModifierOperation;
 import com.bonker.stardewfishing.server.event.StardewMinigameStartedEvent;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -18,6 +19,7 @@ public final class MinigameModifiers {
     private static final Component PERCENT = Component.translatable("tooltip.stardew_fishing.modifier.percent");
     private static final Component TIERS = Component.translatable("tooltip.stardew_fishing.modifier.tiers");
 
+    private final ModifierOperation[] operations;
     private final Map<Type, ModifierOperation> modifierMap;
     private final List<Component> tooltip;
 
@@ -25,6 +27,8 @@ public final class MinigameModifiers {
         if (operations.length != Type.values().length) {
             throw new RuntimeException("Minigame modifiers does not cover all types: " + Arrays.toString(operations));
         }
+
+        this.operations = operations;
 
         modifierMap = new TreeMap<>();
         for (int i = 0; i < operations.length; i++) {
@@ -102,6 +106,20 @@ public final class MinigameModifiers {
 
     private static RecordCodecBuilder<MinigameModifiers, ModifierOperation> m(int i) {
         return ModifierOperation.CODEC.optionalFieldOf(Type.values()[i].toString(), ModifierOperation.DEFAULT).forGetter(o -> o.modifierMap.get(Type.values()[i]));
+    }
+
+    public void write(FriendlyByteBuf buf) {
+        for (ModifierOperation operation : operations) {
+            buf.writeUtf(operation.toString());
+        }
+    }
+
+    public static MinigameModifiers read(FriendlyByteBuf buf) {
+        ModifierOperation[] operations = new ModifierOperation[Type.values().length];
+        for (int i = 0; i < operations.length; i++) {
+            operations[i] = ModifierOperation.parse(buf.readUtf());
+        }
+        return new MinigameModifiers(operations);
     }
 
     public enum Type {

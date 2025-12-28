@@ -10,7 +10,6 @@ import com.bonker.stardewfishing.proxy.QualityFoodProxy;
 import com.bonker.stardewfishing.server.LockableList;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
 import com.bonker.stardewfishing.server.data.MinigameDisabledPlayers;
-import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.event.StardewMinigameEndedEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameModifyRewardsEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameStartedEvent;
@@ -110,7 +109,7 @@ public class FishingHookLogic {
             StardewMinigameStartedEvent startEvent = new StardewMinigameStartedEvent(player, player.fishing, fishingRod, fish, FishBehaviorReloadListener.getBehavior(fish), fluid.is(FluidTags.LAVA));
 
             ItemUtils.getAllModifierItems(fishingRod).forEach(stack ->
-                    MinigameModifiersReloadListener.getModifiers(stack)
+                    StardewFishing.getModifiers(stack)
                             .ifPresent(modifiers -> modifiers.apply(startEvent)));
 
 

@@ -24,7 +24,7 @@ public record ModifierOperation(Type type, double value) {
     }
 
     public boolean matters() {
-        return this != DEFAULT;
+        return !equals(DEFAULT);
     }
 
     public boolean isPositive() {

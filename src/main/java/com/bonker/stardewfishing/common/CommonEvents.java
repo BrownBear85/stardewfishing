@@ -4,6 +4,7 @@ import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.client.RodTooltipHandler;
 import com.bonker.stardewfishing.common.init.SFItems;
+import com.bonker.stardewfishing.common.networking.S2CSyncModifiersPacket;
 import com.bonker.stardewfishing.common.networking.SFNetworking;
 import com.bonker.stardewfishing.proxy.ClientProxy;
 import com.bonker.stardewfishing.proxy.ItemUtils;
@@ -12,14 +13,12 @@ import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.ItemStackedOnOtherEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -106,7 +105,7 @@ public class CommonEvents {
                 }
             }
 
-            MinigameModifiersReloadListener.getModifiers(event.getItemStack()).ifPresent(modifiers -> {
+            StardewFishing.getModifiers(event.getItemStack()).ifPresent(modifiers -> {
                 if (!event.getToolTip().get(event.getToolTip().size() - 1).getString().isEmpty()) {
                     event.getToolTip().add(Component.empty());
                 }
@@ -130,7 +129,14 @@ public class CommonEvents {
         @SubscribeEvent
         public static void onAddReloadListeners(final AddReloadListenerEvent event) {
             event.addListener(FishBehaviorReloadListener.create());
-            event.addListener(MinigameModifiersReloadListener.create());
+            event.addListener(MinigameModifiersReloadListener.getOrCreate());
+        }
+
+        @SubscribeEvent
+        public static void onPlayerJoin(final OnDatapackSyncEvent event) {
+            for (ServerPlayer player : event.getPlayers()) {
+                SFNetworking.sendToPlayer(player, new S2CSyncModifiersPacket(MinigameModifiersReloadListener.getOrCreate().getData()));
+            }
         }
     }
 

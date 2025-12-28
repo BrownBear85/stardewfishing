@@ -1,20 +1,30 @@
 package com.bonker.stardewfishing;
 
+import com.bonker.stardewfishing.client.StardewFishingClient;
+import com.bonker.stardewfishing.proxy.MinigameModifiersSupplier;
 import com.bonker.stardewfishing.common.init.*;
+import com.bonker.stardewfishing.server.data.MinigameModifiers;
+import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.Optional;
 
 @Mod(StardewFishing.MODID)
 public class StardewFishing {
@@ -73,5 +83,22 @@ public class StardewFishing {
     
     public static ResourceLocation resource(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
+    public static Optional<MinigameModifiers> getModifiers(ItemStack stack) {
+        MinigameModifiersSupplier modifiersSupplier;
+        if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
+            modifiersSupplier = MinigameModifiersReloadListener.getOrCreate();
+        } else {
+            modifiersSupplier = StardewFishingClient.modifiersSupplier;
+        }
+
+        if (modifiersSupplier != null) {
+            Map<Item, MinigameModifiers> data = modifiersSupplier.getData();
+            if (data.containsKey(stack.getItem())) {
+                return Optional.of(data.get(stack.getItem()));
+            }
+        }
+        return Optional.empty();
     }
 }

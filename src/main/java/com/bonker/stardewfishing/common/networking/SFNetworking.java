@@ -1,14 +1,13 @@
 package com.bonker.stardewfishing.common.networking;
 
 import com.bonker.stardewfishing.StardewFishing;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class SFNetworking {
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = "2";
 
     private static SimpleChannel CHANNEL;
 
@@ -31,6 +30,12 @@ public class SFNetworking {
                 S2CStartMinigamePacket::encode,
                 S2CStartMinigamePacket::new,
                 S2CStartMinigamePacket::handle);
+
+        CHANNEL.registerMessage(id(),
+                S2CSyncModifiersPacket.class,
+                S2CSyncModifiersPacket::encode,
+                S2CSyncModifiersPacket::fromBytes,
+                S2CSyncModifiersPacket::handle);
 
         CHANNEL.registerMessage(id(),
                 C2SCompleteMinigamePacket.class,
