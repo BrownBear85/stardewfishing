@@ -100,8 +100,13 @@ public class ClientEvents {
         }
 
         @SubscribeEvent
-        public static void onRegisterKeyBindings(RegisterKeyMappingsEvent event) {
+        public static void onRegisterKeyBindings(final RegisterKeyMappingsEvent event) {
             event.register(StardewFishingClient.MINIGAME_BUTTON.get());
+        }
+
+        @SubscribeEvent
+        public static void onAddClientReloadListeners(final RegisterClientReloadListenersEvent event) {
+            event.registerReloadListener(DimensionTextureManager.getOrCreate());
         }
     }
 }

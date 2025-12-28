@@ -10,16 +10,16 @@ import java.util.function.Supplier;
 
 public record S2CStartMinigamePacket(int idleTime, float topSpeed, float upAcceleration, float downAcceleration,
                                      int avgDistance, int moveVariation, ItemStack fish, boolean treasureChest,
-                                     boolean goldenChest, float lineStrength, int barSize, boolean lava) {
+                                     boolean goldenChest, float lineStrength, int barSize) {
     public S2CStartMinigamePacket(StardewMinigameStartedEvent event, boolean treasureChest, boolean goldenChest) {
         this(event.getIdleTime(), event.getTopSpeed(), event.getUpAcceleration(), event.getDownAcceleration(),
                 event.getAvgDistance(), event.getMoveVariation(), event.getFish(), treasureChest, goldenChest,
-                (float) event.getLineStrength(), event.getBarSize(), event.isLavaFishing());
+                (float) event.getLineStrength(), event.getBarSize());
     }
 
     public S2CStartMinigamePacket(FriendlyByteBuf buf) {
         this(buf.readShort(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readShort(), buf.readShort(),
-                buf.readItem(), buf.readBoolean(), buf.readBoolean(), buf.readFloat(), buf.readShort(), buf.readBoolean());
+                buf.readItem(), buf.readBoolean(), buf.readBoolean(), buf.readFloat(), buf.readShort());
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -34,7 +34,6 @@ public record S2CStartMinigamePacket(int idleTime, float topSpeed, float upAccel
         buf.writeBoolean(goldenChest);
         buf.writeFloat(lineStrength);
         buf.writeShort(barSize);
-        buf.writeBoolean(lava);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {

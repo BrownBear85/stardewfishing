@@ -23,14 +23,11 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
 public class FishingScreen extends Screen {
     private static final Component TITLE = Component.literal("Fishing Minigame");
-    private static final ResourceLocation TEXTURE = StardewFishing.resource("textures/gui/minigame.png");
-    private static final ResourceLocation NETHER_TEXTURE = StardewFishing.resource("textures/gui/minigame_nether.png");
     private static final ResourceLocation CHEST_TEXTURE = StardewFishing.resource("textures/gui/chest.png");
     private static final ResourceLocation GOLDEN_CHEST_TEXTURE = StardewFishing.resource("textures/gui/golden_chest.png");
 
@@ -51,7 +48,6 @@ public class FishingScreen extends Screen {
 
     private final FishingMinigame minigame;
     private final ItemStack fish;
-    private final boolean lava;
 
     private int leftPos, topPos;
     private Status status = Status.HIT_TEXT;
@@ -83,7 +79,6 @@ public class FishingScreen extends Screen {
         this.minigame = new FishingMinigame(this, packet, Objects.requireNonNull(Minecraft.getInstance().player), packet.lineStrength(), packet.barSize());
         this.fish = packet.fish();
         this.progressBar = new Animation(minigame.getProgress());
-        this.lava = packet.lava();
     }
 
     @Override
@@ -92,7 +87,7 @@ public class FishingScreen extends Screen {
         partialTick = minecraft.getFrameTime();
 
         PoseStack poseStack = pGuiGraphics.pose();
-        ResourceLocation texture = lava ? NETHER_TEXTURE : TEXTURE;
+        ResourceLocation texture = DimensionTextureManager.getOrCreate().getMinigameTexture(minecraft.level);
 
         if (status == Status.HIT_TEXT) {
             // render HIT!
