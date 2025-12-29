@@ -158,10 +158,6 @@
       "required": false
     },
     {
-      "id": "cobblemon:pokerod_smithing_template",
-      "required": false
-    },
-    {
       "id": "cobblemon:level_rod",
       "required": false
     },
