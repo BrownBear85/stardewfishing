@@ -18,7 +18,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
-import net.neoforged.neoforge.client.event.sound.PlaySoundSourceEvent;
 
 @EventBusSubscriber(modid = StardewFishing.MODID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -97,5 +96,10 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRegisterKeyBindings(RegisterKeyMappingsEvent event) {
         event.register(StardewFishingClient.MINIGAME_BUTTON.get());
+    }
+
+    @SubscribeEvent
+    public static void onAddClientReloadListeners(final RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(DimensionTextureManager.getOrCreate());
     }
 }
