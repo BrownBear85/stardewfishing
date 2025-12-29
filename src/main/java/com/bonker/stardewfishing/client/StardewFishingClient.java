@@ -2,6 +2,7 @@ package com.bonker.stardewfishing.client;
 
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
+import com.bonker.stardewfishing.proxy.MinigameModifiersSupplier;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
@@ -11,6 +12,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
+
+import javax.annotation.Nullable;
 
 @Mod(value = StardewFishing.MODID, dist = Dist.CLIENT)
 public class StardewFishingClient {
@@ -23,4 +26,7 @@ public class StardewFishingClient {
     public StardewFishingClient(ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, SFConfig.CLIENT_SPEC);
     }
+
+    @Nullable
+    public static MinigameModifiersSupplier modifiersSupplier;
 }

@@ -1,7 +1,11 @@
 package com.bonker.stardewfishing;
 
+import com.bonker.stardewfishing.client.StardewFishingClient;
 import com.bonker.stardewfishing.common.init.*;
+import com.bonker.stardewfishing.proxy.MinigameModifiersSupplier;
 import com.bonker.stardewfishing.server.SFCommands;
+import com.bonker.stardewfishing.server.data.MinigameModifiers;
+import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -10,15 +14,21 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforgespi.language.IModInfo;
 import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.Optional;
 
 @Mod(StardewFishing.MODID)
 public class StardewFishing {
@@ -80,5 +90,22 @@ public class StardewFishing {
 
     public static <T> ResourceKey<T> resource(ResourceKey<Registry<T>> registryKey, String path) {
         return ResourceKey.create(registryKey, resource(path));
+    }
+
+    public static Optional<MinigameModifiers> getModifiers(ItemStack stack) {
+        MinigameModifiersSupplier modifiersSupplier;
+        if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
+            modifiersSupplier = MinigameModifiersReloadListener.getOrCreate();
+        } else {
+            modifiersSupplier = StardewFishingClient.modifiersSupplier;
+        }
+
+        if (modifiersSupplier != null) {
+            Map<Item, MinigameModifiers> data = modifiersSupplier.getData();
+            if (data.containsKey(stack.getItem())) {
+                return Optional.of(data.get(stack.getItem()));
+            }
+        }
+        return Optional.empty();
     }
 }

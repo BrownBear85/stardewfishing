@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record S2CStartMinigamePacket(int idleTime, float topSpeed, float upAcceleration, float downAcceleration,
                                      int avgDistance, int moveVariation, ItemStack fish, boolean treasureChest,
-                                     boolean goldenChest, float lineStrength, int barSize, boolean lava)
+                                     boolean goldenChest, float lineStrength, int barSize)
         implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<S2CStartMinigamePacket> TYPE =
             new CustomPacketPayload.Type<>(StardewFishing.resource("s2c_start_minigame"));
@@ -24,14 +24,13 @@ public record S2CStartMinigamePacket(int idleTime, float topSpeed, float upAccel
                 data.getEvent().getIdleTime(), data.getEvent().getTopSpeed(), data.getEvent().getUpAcceleration(),
                 data.getEvent().getDownAcceleration(), data.getEvent().getAvgDistance(),
                 data.getEvent().getMoveVariation(), data.getEvent().getFish(), data.hasTreasureChest(),
-                data.hasGoldenChest(), (float) data.getEvent().getLineStrength(), data.getEvent().getBarSize(),
-                data.getEvent().isLavaFishing()
+                data.hasGoldenChest(), (float) data.getEvent().getLineStrength(), data.getEvent().getBarSize()
         );
     }
 
     public S2CStartMinigamePacket(RegistryFriendlyByteBuf buf) {
         this(buf.readShort(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readShort(), buf.readShort(),
-                ItemStack.OPTIONAL_STREAM_CODEC.decode(buf), buf.readBoolean(), buf.readBoolean(), buf.readFloat(), buf.readShort(), buf.readBoolean());
+                ItemStack.OPTIONAL_STREAM_CODEC.decode(buf), buf.readBoolean(), buf.readBoolean(), buf.readFloat(), buf.readShort());
     }
 
     public void encode(RegistryFriendlyByteBuf buf) {
@@ -46,7 +45,6 @@ public record S2CStartMinigamePacket(int idleTime, float topSpeed, float upAccel
         buf.writeBoolean(goldenChest);
         buf.writeFloat(lineStrength);
         buf.writeShort(barSize);
-        buf.writeBoolean(lava);
     }
 
     @Override

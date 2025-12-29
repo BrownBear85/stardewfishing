@@ -8,6 +8,7 @@ import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.items.LegendaryCatch;
 import com.bonker.stardewfishing.common.networking.C2SCompleteMinigamePacket;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
+import com.bonker.stardewfishing.common.networking.S2CSyncModifiersPacket;
 import com.bonker.stardewfishing.proxy.ClientProxy;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
@@ -15,6 +16,7 @@ import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -23,9 +25,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -118,7 +122,7 @@ public class CommonEvents {
             }
         }
 
-        MinigameModifiersReloadListener.getModifiers(event.getItemStack()).ifPresent(modifiers -> {
+        StardewFishing.getModifiers(event.getItemStack()).ifPresent(modifiers -> {
             if (!event.getToolTip().getLast().getString().isEmpty()) {
                 event.getToolTip().add(Component.empty());
             }
@@ -135,17 +139,29 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onAddReloadListeners(final AddReloadListenerEvent event) {
         event.addListener(FishBehaviorReloadListener.create());
-        event.addListener(MinigameModifiersReloadListener.create());
+        event.addListener(MinigameModifiersReloadListener.getOrCreate());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoin(final OnDatapackSyncEvent event) {
+        event.getRelevantPlayers().forEach(player ->
+                PacketDistributor.sendToPlayer(player, new S2CSyncModifiersPacket(MinigameModifiersReloadListener.getOrCreate().getData())));
     }
 
     @SubscribeEvent
     public static void onRegistryPayloadHandlers(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("2");
 
         registrar.playToClient(
                 S2CStartMinigamePacket.TYPE,
                 S2CStartMinigamePacket.STREAM_CODEC,
                 S2CStartMinigamePacket::handle
+        );
+
+        registrar.playToClient(
+                S2CSyncModifiersPacket.TYPE,
+                S2CSyncModifiersPacket.STREAM_CODEC,
+                S2CSyncModifiersPacket::handle
         );
 
         registrar.playToServer(

@@ -1,6 +1,7 @@
 package com.bonker.stardewfishing.server.data;
 
 import com.bonker.stardewfishing.StardewFishing;
+import com.bonker.stardewfishing.proxy.MinigameModifiersSupplier;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
@@ -14,7 +15,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.ModList;
 
@@ -23,9 +23,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-public class MinigameModifiersReloadListener extends SimplePreparableReloadListener<Map<String, JsonObject>> {
+public class MinigameModifiersReloadListener extends SimplePreparableReloadListener<Map<String, JsonObject>> implements MinigameModifiersSupplier {
     private static final Gson GSON_INSTANCE = new Gson();
     private static final ResourceLocation LOCATION = StardewFishing.resource("minigame_modifiers.json");
     @Nullable
@@ -57,7 +56,7 @@ public class MinigameModifiersReloadListener extends SimplePreparableReloadListe
                         Item item = BuiltInRegistries.ITEM.get(loc);
                         if (item == Items.AIR) {
                             if (ModList.get().isLoaded(loc.getNamespace())) {
-                                throw new RuntimeException("Mod '" + loc.getNamespace() + "' present but item not registered: " + loc.getPath());
+                                StardewFishing.LOGGER.warn("Mod '{}' present but item not registered: {}. Is the id incorrect?", loc.getNamespace(), loc.getPath());
                             }
                         } else {
                             if (behaviorList.replace || !modifiers.containsKey(item)) {
@@ -70,16 +69,19 @@ public class MinigameModifiersReloadListener extends SimplePreparableReloadListe
         }
     }
 
-    public static MinigameModifiersReloadListener create() {
-        INSTANCE = new MinigameModifiersReloadListener();
+    public static MinigameModifiersReloadListener getOrCreate() {
+        if (INSTANCE == null) {
+            INSTANCE = new MinigameModifiersReloadListener();
+        }
         return INSTANCE;
     }
 
-    public static Optional<MinigameModifiers> getModifiers(ItemStack stack) {
-        if (INSTANCE != null && INSTANCE.modifiers.containsKey(stack.getItem())) {
-            return Optional.of(INSTANCE.modifiers.get(stack.getItem()));
+    @Override
+    public Map<Item, MinigameModifiers> getData() {
+        if (modifiers.isEmpty()) {
+            StardewFishing.LOGGER.error("No minigame modifiers data is present. Was it accessed before it was loaded?");
         }
-        return Optional.empty();
+        return modifiers;
     }
 
     private record ModifiersList(boolean replace, Map<ResourceLocation, MinigameModifiers> modifiers) {
