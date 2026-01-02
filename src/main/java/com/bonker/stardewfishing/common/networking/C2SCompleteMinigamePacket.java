@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record C2SCompleteMinigamePacket(boolean success, double accuracy, boolean gotChest) implements CustomPacketPayload {
@@ -39,18 +40,22 @@ public record C2SCompleteMinigamePacket(boolean success, double accuracy, boolea
             return;
         }
 
-        InteractionHand hand = FishingHookLogic.getRodHand(player);
+        InteractionHand hand = ItemUtils.getRodHand(player);
         if (hand == null) {
             FishingHookLogic.endMinigame(player, false, 0, gotChest, 0, null);
             StardewFishing.LOGGER.warn("{} tried to complete a fishing minigame without a fishing rod", player.getScoreboardName());
         } else {
             ItemStack fishingRod = player.getItemInHand(hand);
 
+            ItemUtils.damageAttachedBobber(fishingRod, player);
+
             int qualityBoost = FishingHookAttachment.get(hook).getEvent().getQualityBoost();
             FishingHookLogic.endMinigame(player, success, accuracy, gotChest, qualityBoost, fishingRod);
-            fishingRod.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-
-            ItemUtils.damageBobber(fishingRod, player);
+            ItemStack rodCache = fishingRod.copy();
+            fishingRod.hurtAndBreak(1, player.serverLevel(), player, item -> {
+                EventHooks.onPlayerDestroyItem(player, rodCache, hand);
+                player.onEquippedItemBroken(item, LivingEntity.getSlotForHand(hand));
+            });
         }
     }
 }

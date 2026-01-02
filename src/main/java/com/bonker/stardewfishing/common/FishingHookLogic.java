@@ -18,12 +18,8 @@ import com.bonker.stardewfishing.server.event.StardewMinigameModifyRewardsEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameStartedEvent;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
@@ -32,7 +28,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -40,8 +35,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
@@ -50,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class FishingHookLogic {
     public static boolean startStardewMinigame(ServerPlayer player) {
@@ -72,7 +64,7 @@ public class FishingHookLogic {
                 .findFirst()
                 .orElseThrow();
 
-        InteractionHand rodHand = getRodHand(player);
+        InteractionHand rodHand = ItemUtils.getRodHand(player);
         if (rodHand == null) {
             StardewFishing.LOGGER.warn("{} tried to start a minigame without a fishing rod", player.getScoreboardName());
             return false;
@@ -171,7 +163,7 @@ public class FishingHookLogic {
 
         ServerLevel level = player.serverLevel();
         for (ItemStack reward : rewards) {
-            InteractionHand hand = getRodHand(player);
+            InteractionHand hand = ItemUtils.getRodHand(player);
             ItemStack handItem = hand != null ? player.getItemInHand(hand) : ItemStack.EMPTY;
             CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, handItem, hook, rewards);
 
@@ -233,30 +225,5 @@ public class FishingHookLogic {
         }
 
         return items;
-    }
-
-    public static InteractionHand getRodHand(Player player) {
-        boolean mainHand = player.getItemInHand(InteractionHand.MAIN_HAND).canPerformAction(ItemAbilities.FISHING_ROD_CAST);
-        if (mainHand) return InteractionHand.MAIN_HAND;
-
-        boolean offHand = player.getItemInHand(InteractionHand.OFF_HAND).canPerformAction(ItemAbilities.FISHING_ROD_CAST);
-        if (offHand) return InteractionHand.OFF_HAND;
-
-        return null;
-    }
-
-    public static Optional<ItemStack> damageBobber(ItemStack bobber, ServerPlayer player) {
-        if (!bobber.isDamageableItem()) {
-            return Optional.empty();
-        }
-
-        ItemStack bobberCache = bobber.copy();
-        bobber.hurtAndBreak(1, player.serverLevel(), player, p -> {
-            player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS);
-            Vec3 particlePos = player.getEyePosition().add(player.getLookAngle());
-            player.serverLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobberCache), particlePos.x(), particlePos.y(), particlePos.z(), 15, 0.1, 0.1, 0.1, 0.1);
-            player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobberCache.getDisplayName()), true);
-        });
-        return Optional.of(bobber);
     }
 }

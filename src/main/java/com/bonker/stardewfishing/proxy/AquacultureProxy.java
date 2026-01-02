@@ -1,6 +1,5 @@
 package com.bonker.stardewfishing.proxy;
 
-import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.teammetallurgy.aquaculture.api.AquacultureAPI;
 import com.teammetallurgy.aquaculture.api.fishing.Hooks;
 import com.teammetallurgy.aquaculture.entity.AquaFishingBobberEntity;
@@ -19,7 +18,7 @@ import java.util.List;
 public class AquacultureProxy {
     public static void damageEquippedBobber(ItemStack fishingRod, ServerPlayer player) {
         ItemStackHandler handler = AquaFishingRodItem.getHandler(fishingRod);
-        FishingHookLogic.damageBobber(handler.getStackInSlot(3), player)
+        ItemUtils.tryDamageBobber(handler.getStackInSlot(3), player)
                 .ifPresent(b -> handler.setStackInSlot(3, b));
     }
 

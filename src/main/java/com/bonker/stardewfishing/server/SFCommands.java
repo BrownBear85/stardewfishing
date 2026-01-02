@@ -60,7 +60,7 @@ public class SFCommands {
     private static int startMinigame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
 
-        InteractionHand rodHand = FishingHookLogic.getRodHand(player);
+        InteractionHand rodHand = ItemUtils.getRodHand(player);
         if (rodHand == null) {
             throw NO_ROD.create();
         }

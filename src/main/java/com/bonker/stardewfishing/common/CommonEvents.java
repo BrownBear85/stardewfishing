@@ -16,7 +16,6 @@ import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -29,6 +28,7 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -134,6 +134,16 @@ public class CommonEvents {
                 event.getToolTip().add(Component.translatable("tooltip.stardew_fishing.rod_modifier_shift").withStyle(StardewFishing.LIGHT_COLOR));
             }
         });
+    }
+
+    @SubscribeEvent
+    public static void onItemDestroyed(final PlayerDestroyItemEvent event) {
+        if (ItemUtils.isFishingRod(event.getOriginal())) {
+            ItemStack bobber = ItemUtils.getBobber(event.getOriginal(), event.getEntity().registryAccess());
+            if (!bobber.isEmpty()) {
+                event.getEntity().spawnAtLocation(bobber);
+            }
+        }
     }
 
     @SubscribeEvent
