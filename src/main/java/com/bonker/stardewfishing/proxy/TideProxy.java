@@ -1,6 +1,5 @@
 package com.bonker.stardewfishing.proxy;
 
-import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.li64.tide.data.TideTags;
 import com.li64.tide.data.rods.CustomRodManager;
 import com.li64.tide.registries.TideEntityTypes;
@@ -21,7 +20,7 @@ public class TideProxy {
         if (!CustomRodManager.hasBobber(fishingRod)) {
             return;
         }
-        FishingHookLogic.damageBobber(getBobber(fishingRod), player)
+        ItemUtils.tryDamageBobber(getBobber(fishingRod), player)
                 .ifPresent(b -> CustomRodManager.setBobber(fishingRod, b));
     }
 

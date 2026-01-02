@@ -1,19 +1,26 @@
 package com.bonker.stardewfishing.proxy;
 
 import com.bonker.stardewfishing.StardewFishing;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ToolActions;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemUtils {
     public static ItemStack getBobber(ItemStack fishingRod) {
@@ -56,12 +63,34 @@ public class ItemUtils {
         }
     }
 
-    public static void damageBobber(ItemStack fishingRod, ServerPlayer player) {
+    public static void damageAttachedBobber(ItemStack fishingRod, ServerPlayer player) {
         if (StardewFishing.AQUACULTURE_INSTALLED && AquacultureProxy.isAquaRod(fishingRod)) {
             AquacultureProxy.damageEquippedBobber(fishingRod, player);
         } else if (StardewFishing.TIDE_INSTALLED && TideProxy.isTideRod(fishingRod)) {
             TideProxy.damageEquippedBobber(fishingRod, player);
+        } else {
+            ItemStack bobber = getBobber(fishingRod);
+            if (bobber.isEmpty()) {
+                return;
+            }
+
+            tryDamageBobber(bobber, player).ifPresent(b -> setBobber(fishingRod, b));
         }
+    }
+
+    public static Optional<ItemStack> tryDamageBobber(ItemStack bobber, ServerPlayer player) {
+        if (!bobber.isDamageableItem()) {
+            return Optional.empty();
+        }
+
+        ItemStack bobberCache = bobber.copy();
+        bobber.hurtAndBreak(1, player, p -> {
+            player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS);
+            Vec3 particlePos = player.getEyePosition().add(player.getLookAngle());
+            player.serverLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobberCache), particlePos.x(), particlePos.y(), particlePos.z(), 8, 0.1, 0.1, 0.1, 0.1);
+            player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobberCache.getHoverName()), true);
+        });
+        return Optional.of(bobber);
     }
 
     private static ItemStack getBobberNBT(ItemStack fishingRod) {
@@ -156,5 +185,15 @@ public class ItemUtils {
             tooltip.add(Component.translatable("tooltip.stardew_fishing.legendary_data", player, time)
                     .withStyle(StardewFishing.LIGHTER_COLOR));
         }
+    }
+
+    public static InteractionHand getRodHand(Player player) {
+        boolean mainHand = player.getItemInHand(InteractionHand.MAIN_HAND).canPerformAction(ToolActions.FISHING_ROD_CAST);
+        if (mainHand) return InteractionHand.MAIN_HAND;
+
+        boolean offHand = player.getItemInHand(InteractionHand.OFF_HAND).canPerformAction(ToolActions.FISHING_ROD_CAST);
+        if (offHand) return InteractionHand.OFF_HAND;
+
+        return null;
     }
 }

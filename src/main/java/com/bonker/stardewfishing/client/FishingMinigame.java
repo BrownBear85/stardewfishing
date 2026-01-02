@@ -1,6 +1,5 @@
 package com.bonker.stardewfishing.client;
 
-import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
@@ -61,7 +60,7 @@ public class FishingMinigame {
         this.barSize = barSize;
         this.maxBobberHeight = 142 - barSize;
 
-        InteractionHand hand = FishingHookLogic.getRodHand(player);
+        InteractionHand hand = ItemUtils.getRodHand(player);
         if (hand != null) {
             ItemStack bobber = ItemUtils.getBobber(player.getItemInHand(hand));
 

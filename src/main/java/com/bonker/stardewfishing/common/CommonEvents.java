@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -117,6 +118,16 @@ public class CommonEvents {
                     event.getToolTip().add(Component.translatable("tooltip.stardew_fishing.rod_modifier_shift").withStyle(StardewFishing.LIGHT_COLOR));
                 }
             });
+        }
+
+        @SubscribeEvent
+        public static void onItemDestroyed(final PlayerDestroyItemEvent event) {
+            if (ItemUtils.isFishingRod(event.getOriginal())) {
+                ItemStack bobber = ItemUtils.getBobber(event.getOriginal());
+                if (!bobber.isEmpty()) {
+                    event.getEntity().spawnAtLocation(bobber);
+                }
+            }
         }
 
         @SubscribeEvent

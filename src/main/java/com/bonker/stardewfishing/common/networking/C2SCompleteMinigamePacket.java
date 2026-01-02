@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -37,20 +38,24 @@ public record C2SCompleteMinigamePacket(boolean success, double accuracy, boolea
         }
 
         contextSupplier.get().enqueueWork(() -> {
-            InteractionHand hand = FishingHookLogic.getRodHand(player);
+            InteractionHand hand = ItemUtils.getRodHand(player);
             if (hand == null) {
                 FishingHookLogic.endMinigame(player, false, 0, gotChest, 0, null);
                 StardewFishing.LOGGER.warn("{} tried to complete a fishing minigame without a fishing rod", player.getScoreboardName());
             } else {
                 ItemStack fishingRod = player.getItemInHand(hand);
 
+                ItemUtils.damageAttachedBobber(fishingRod, player);
+
                 int[] qualityBoost = {0};
                 hook.getCapability(FishingHookLogic.CapProvider.CAP).ifPresent(cap -> qualityBoost[0] = cap.event.getQualityBoost());
 
                 FishingHookLogic.endMinigame(player, success, accuracy, gotChest, qualityBoost[0], fishingRod);
-                fishingRod.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-
-                ItemUtils.damageBobber(fishingRod, player);
+                ItemStack rodCache = fishingRod.copy();
+                fishingRod.hurtAndBreak(1, player, p -> {
+                    ForgeEventFactory.onPlayerDestroyItem(player, rodCache, hand);
+                    p.broadcastBreakEvent(hand);
+                });
             }
         });
     }

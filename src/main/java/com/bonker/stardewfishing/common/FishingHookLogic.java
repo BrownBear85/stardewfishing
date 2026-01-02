@@ -16,13 +16,9 @@ import com.bonker.stardewfishing.server.event.StardewMinigameStartedEvent;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
@@ -32,7 +28,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -40,9 +35,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -93,7 +86,7 @@ public class FishingHookLogic {
                     .findFirst()
                     .orElseThrow();
 
-            InteractionHand rodHand = getRodHand(player);
+            InteractionHand rodHand = ItemUtils.getRodHand(player);
             if (rodHand == null) {
                 StardewFishing.LOGGER.warn("{} tried to start a minigame without a fishing rod", player.getScoreboardName());
                 return false;
@@ -241,7 +234,7 @@ public class FishingHookLogic {
                 int exp = (int) ((player.getRandom().nextInt(6) + 1) * SFConfig.getMultiplier(accuracy, cap.event.getExpMultiplier()));
                 level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5, player.getZ() + 0.5, exp));
 
-                InteractionHand hand = getRodHand(player);
+                InteractionHand hand = ItemUtils.getRodHand(player);
                 ItemStack handItem = hand != null ? player.getItemInHand(hand) : ItemStack.EMPTY;
                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, handItem, hook, cap.rewards);
             }
@@ -273,29 +266,6 @@ public class FishingHookLogic {
         }
 
         return items;
-    }
-
-    public static InteractionHand getRodHand(Player player) {
-        boolean mainHand = player.getItemInHand(InteractionHand.MAIN_HAND).canPerformAction(ToolActions.FISHING_ROD_CAST);
-        if (mainHand) return InteractionHand.MAIN_HAND;
-
-        boolean offHand = player.getItemInHand(InteractionHand.OFF_HAND).canPerformAction(ToolActions.FISHING_ROD_CAST);
-        if (offHand) return InteractionHand.OFF_HAND;
-
-        return null;
-    }
-
-    public static Optional<ItemStack> damageBobber(ItemStack bobber, ServerPlayer player) {
-        if (!bobber.isDamageableItem()) {
-            return Optional.empty();
-        }
-        bobber.hurtAndBreak(1, player, p -> {
-            player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS);
-            Vec3 particlePos = player.getEyePosition().add(player.getLookAngle());
-            player.serverLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobber), particlePos.x(), particlePos.y(), particlePos.z(), 15, 0.1, 0.1, 0.1, 0.1);
-            player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobber.getDisplayName()), true);
-        });
-        return Optional.of(bobber);
     }
 
     public static class CapProvider implements ICapabilityProvider {
