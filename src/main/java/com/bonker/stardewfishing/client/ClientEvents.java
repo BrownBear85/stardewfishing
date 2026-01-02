@@ -22,11 +22,6 @@ import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 @EventBusSubscriber(modid = StardewFishing.MODID, value = Dist.CLIENT)
 public class ClientEvents {
     @SubscribeEvent
-    public static void onRenderTooltip(final RenderTooltipEvent.Pre event) {
-        event.getGraphics().pose().translate(0, 0, 500);
-    }
-
-    @SubscribeEvent
     public static void onClientTick(final ClientTickEvent.Pre event) {
         if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
             RodTooltipHandler.tick(containerScreen.hoveredSlot, containerScreen.getMenu().getCarried());
