@@ -23,11 +23,6 @@ public class ClientEvents {
     @Mod.EventBusSubscriber(modid = StardewFishing.MODID, value = Dist.CLIENT)
     public static class ForgeBus {
         @SubscribeEvent
-        public static void onRenderTooltip(final RenderTooltipEvent.Pre event) {
-            event.getGraphics().pose().translate(0, 0, 500);
-        }
-
-        @SubscribeEvent
         public static void onClientTick(final TickEvent.ClientTickEvent event) {
             if (event.phase != TickEvent.Phase.START) {
                 return;
