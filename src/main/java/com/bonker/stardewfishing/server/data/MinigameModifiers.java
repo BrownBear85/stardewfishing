@@ -110,14 +110,17 @@ public final class MinigameModifiers {
 
     public void write(FriendlyByteBuf buf) {
         for (ModifierOperation operation : operations) {
-            buf.writeUtf(operation.toString());
+            buf.writeByte(operation.type().ordinal());
+            buf.writeDouble(operation.value());
         }
     }
 
     public static MinigameModifiers read(FriendlyByteBuf buf) {
         ModifierOperation[] operations = new ModifierOperation[Type.values().length];
         for (int i = 0; i < operations.length; i++) {
-            operations[i] = ModifierOperation.parse(buf.readUtf());
+            ModifierOperation.Type type = ModifierOperation.Type.values()[buf.readByte()];
+            double value = buf.readDouble();
+            operations[i] = new ModifierOperation(type, value);
         }
         return new MinigameModifiers(operations);
     }
