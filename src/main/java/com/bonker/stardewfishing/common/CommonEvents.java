@@ -160,7 +160,7 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void onRegistryPayloadHandlers(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("2");
+        PayloadRegistrar registrar = event.registrar("3");
 
         registrar.playToClient(
                 S2CStartMinigamePacket.TYPE,
