@@ -1,6 +1,7 @@
 package com.bonker.stardewfishing.common.init;
 
 import com.bonker.stardewfishing.StardewFishing;
+import com.bonker.stardewfishing.common.items.PokemonPlaceholderItem;
 import com.bonker.stardewfishing.common.items.SFTooltipItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -75,7 +76,7 @@ public class SFItems {
     public static final DeferredItem<SFTooltipItem> DEMON_GAR = ITEMS.registerItem("demon_gar",
             SFTooltipItem::new);
 
-    public static final DeferredItem<Item> POKEMON_PLACEHOLDER = ITEMS.registerItem("pokemon_placeholder", Item::new);
+    public static final DeferredItem<Item> POKEMON_PLACEHOLDER = ITEMS.registerItem("pokemon_placeholder", PokemonPlaceholderItem::new);
 
     public static final Supplier<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("items", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.stardewFishing"))

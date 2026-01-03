@@ -6,8 +6,9 @@ import com.bonker.stardewfishing.common.FishingHookLogic;
 import com.bonker.stardewfishing.common.init.SFComponentTypes;
 import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
+import com.bonker.stardewfishing.proxy.CobblemonProxy;
 import com.bonker.stardewfishing.server.data.FishingHookAttachment;
-import com.cobblemon.mod.common.api.spawning.SpawnBucket;
+import com.cobblemon.mod.common.api.spawning.detail.SpawnAction;
 import com.cobblemon.mod.common.entity.fishing.PokeRodFishingBobberEntity;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
@@ -41,13 +42,12 @@ public abstract class PokeRodFishingBobberEntityMixin extends FishingHook {
     private ItemStack bobberBait;
 
     @Shadow
-    private SpawnBucket chosenBucket;
-
-    @Shadow
     public abstract boolean checkReduceBiteTime(ItemStack stack);
 
     @Shadow
     public abstract int alterBiteTimeAttempt(int waitCountdown, ItemStack stack);
+
+    @Shadow public abstract SpawnAction getPlannedSpawnAction();
 
     private PokeRodFishingBobberEntityMixin(EntityType<? extends FishingHook> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -93,15 +93,18 @@ public abstract class PokeRodFishingBobberEntityMixin extends FishingHook {
 
     @Inject(method = "retrieve(Lnet/minecraft/world/item/ItemStack;)I",
             at = @At(value = "INVOKE",
-                    target = "Lcom/cobblemon/mod/common/entity/fishing/PokeRodFishingBobberEntity;spawnPokemonFromFishing(Lnet/minecraft/world/entity/player/Player;Lcom/cobblemon/mod/common/api/spawning/SpawnBucket;Lnet/minecraft/world/item/ItemStack;)Z"),
+                    target = "Lcom/cobblemon/mod/common/entity/fishing/PokeRodFishingBobberEntity;spawnPokemonFromFishing(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/item/ItemStack;Lcom/cobblemon/mod/common/api/spawning/detail/SpawnAction;)Z"),
             cancellable = true)
     public void retrievePokemon(ItemStack pStack, CallbackInfoReturnable<Integer> cir) {
         ServerPlayer player = (ServerPlayer) getPlayerOwner();
         if (player == null) return;
 
-        ItemStack placeholderStack = new ItemStack(SFItems.POKEMON_PLACEHOLDER.get());
-        placeholderStack.set(SFComponentTypes.POKEMON_TYPE.get(), chosenBucket);
-        FishingHookAttachment.get(this).getRewards().add(placeholderStack);
+        SpawnAction spawnAction = getPlannedSpawnAction();
+        if (spawnAction == null) return;
+
+        ItemStack placeholder = new ItemStack(SFItems.POKEMON_PLACEHOLDER.get());
+        placeholder.set(SFComponentTypes.POKEMON_SPECIES, CobblemonProxy.getPokemonName(spawnAction));
+        FishingHookAttachment.get(this).getRewards().add(placeholder);
 
         if (FishingHookLogic.startStardewMinigame(player)) {
             cir.cancel();

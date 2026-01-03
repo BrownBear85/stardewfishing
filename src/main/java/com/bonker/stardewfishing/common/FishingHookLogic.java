@@ -171,7 +171,7 @@ public class FishingHookLogic {
             level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5, player.getZ() + 0.5, exp));
 
             if (StardewFishing.COBBLEMON_INSTALLED && reward.is(SFItems.POKEMON_PLACEHOLDER)) {
-                CobblemonProxy.spawnPokemon(hook, player, reward.get(SFComponentTypes.POKEMON_TYPE), fishingRod);
+                CobblemonProxy.spawnPokemon(hook, player, fishingRod);
             } else {
                 if (reward.is(ItemTags.FISHES)) {
                     player.awardStat(Stats.FISH_CAUGHT);
