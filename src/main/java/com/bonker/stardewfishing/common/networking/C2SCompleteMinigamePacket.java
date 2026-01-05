@@ -10,15 +10,16 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public record C2SCompleteMinigamePacket(boolean success, double accuracy, boolean gotChest) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<C2SCompleteMinigamePacket> TYPE =
-            new CustomPacketPayload.Type<>(StardewFishing.resource("c2s_complete_minigame"));
+            new CustomPacketPayload.Type<>(StardewFishing.identifier("c2s_complete_minigame"));
 
     public static final StreamCodec<ByteBuf, C2SCompleteMinigamePacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL, C2SCompleteMinigamePacket::success,
@@ -52,9 +53,9 @@ public record C2SCompleteMinigamePacket(boolean success, double accuracy, boolea
             int qualityBoost = FishingHookAttachment.get(hook).getEvent().getQualityBoost();
             FishingHookLogic.endMinigame(player, success, accuracy, gotChest, qualityBoost, fishingRod);
             ItemStack rodCache = fishingRod.copy();
-            fishingRod.hurtAndBreak(1, player.serverLevel(), player, item -> {
+            fishingRod.hurtAndBreak(1, player.level(), player, item -> {
                 EventHooks.onPlayerDestroyItem(player, rodCache, hand);
-                player.onEquippedItemBroken(item, LivingEntity.getSlotForHand(hand));
+                player.onEquippedItemBroken(item, hand.asEquipmentSlot());
             });
         }
     }

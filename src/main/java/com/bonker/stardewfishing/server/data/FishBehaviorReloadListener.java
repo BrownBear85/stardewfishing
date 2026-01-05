@@ -8,7 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -26,12 +26,12 @@ import java.util.*;
 
 public class FishBehaviorReloadListener extends SimplePreparableReloadListener<Map<String, JsonObject>> {
     private static final Gson GSON_INSTANCE = new Gson();
-    private static final ResourceLocation LOCATION = StardewFishing.resource("fish_behaviors.json");
-    private static final ResourceLocation OLD_LOCATION = StardewFishing.resource("data.json");
+    private static final Identifier LOCATION = StardewFishing.identifier("fish_behaviors.json");
+    private static final Identifier OLD_LOCATION = StardewFishing.identifier("data.json");
     private static FishBehaviorReloadListener INSTANCE;
 
     private final Map<Item, FishBehavior> fishBehaviors = new HashMap<>();
-    private final List<ResourceLocation> keys = new ArrayList<>();
+    private final List<Identifier> keys = new ArrayList<>();
     private FishBehavior defaultBehavior;
 
     @Override
@@ -67,7 +67,7 @@ public class FishBehaviorReloadListener extends SimplePreparableReloadListener<M
                     .resultOrPartial(errorMsg -> StardewFishing.LOGGER.warn(makeError(entry.getKey(), errorMsg)))
                     .ifPresent(behaviorList -> {
                         behaviorList.behaviors.forEach((loc, fishBehavior) -> {
-                            Item item = BuiltInRegistries.ITEM.get(loc);
+                            Item item = BuiltInRegistries.ITEM.getValue(loc);
                             if (item == Items.AIR) {
                                 if (ModList.get().isLoaded(loc.getNamespace())) {
                                     throw new RuntimeException(makeError(entry.getKey(), "Mod '" + loc.getNamespace() + "' present but item not registered: " + loc.getPath()));
@@ -103,14 +103,14 @@ public class FishBehaviorReloadListener extends SimplePreparableReloadListener<M
         return INSTANCE.fishBehaviors.getOrDefault(stack.getItem(), INSTANCE.defaultBehavior);
     }
 
-    public static List<ResourceLocation> getKeys() {
+    public static List<Identifier> getKeys() {
         return INSTANCE.keys;
     }
 
-    private record FishBehaviorList(boolean replace, Map<ResourceLocation, FishBehavior> behaviors, Optional<FishBehavior> defaultBehavior) {
+    private record FishBehaviorList(boolean replace, Map<Identifier, FishBehavior> behaviors, Optional<FishBehavior> defaultBehavior) {
         private static final Codec<FishBehaviorList> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 Codec.BOOL.optionalFieldOf("replace", false).forGetter(FishBehaviorList::replace),
-                Codec.unboundedMap(ResourceLocation.CODEC, FishBehavior.CODEC).fieldOf("behaviors").forGetter(FishBehaviorList::behaviors),
+                Codec.unboundedMap(Identifier.CODEC, FishBehavior.CODEC).fieldOf("behaviors").forGetter(FishBehaviorList::behaviors),
                 FishBehavior.CODEC.optionalFieldOf("defaultBehavior").forGetter(FishBehaviorList::defaultBehavior)
         ).apply(inst, FishBehaviorList::new));
     }

@@ -3,6 +3,8 @@ package com.bonker.stardewfishing.common;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.client.RodTooltipHandler;
+import com.bonker.stardewfishing.common.blocks.FishDisplayBlock;
+import com.bonker.stardewfishing.common.init.SFBlocks;
 import com.bonker.stardewfishing.common.init.SFComponentTypes;
 import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.items.LegendaryCatch;
@@ -16,13 +18,14 @@ import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
 import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -92,7 +95,7 @@ public class CommonEvents {
         }
 
         if (event.isCanceled()) {
-            if (event.getPlayer().level().isClientSide && FMLEnvironment.dist.isClient()) {
+            if (event.getPlayer().level().isClientSide() && FMLEnvironment.getDist().isClient()) {
                 RodTooltipHandler.addShake(event.getSlot(), equipped);
             }
         }
@@ -103,6 +106,10 @@ public class CommonEvents {
         if (ItemUtils.isLegendaryFish(event.getItemStack())) {
             event.getToolTip().add(1, SFItems.LEGENDARY_FISH_TOOLTIP.copy().withStyle(ChatFormatting.BOLD));
             ItemUtils.addCatchTooltip(event.getItemStack(), event.getToolTip());
+        }
+
+        if (event.getItemStack().is(SFBlocks.FISH_DISPLAY.asItem())) {
+            event.getToolTip().add(1, FishDisplayBlock.TOOLTIP);
         }
     }
 
@@ -127,7 +134,7 @@ public class CommonEvents {
                 event.getToolTip().add(Component.empty());
             }
 
-            if (ClientProxy.isShiftDown()) {
+            if (event.getFlags().hasShiftDown()) {
                 event.getToolTip().add(Component.translatable("tooltip.stardew_fishing.rod_modifier").withStyle(StardewFishing.LIGHT_COLOR));
                 modifiers.appendTooltip(event.getToolTip());
             } else {
@@ -138,18 +145,18 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void onItemDestroyed(final PlayerDestroyItemEvent event) {
-        if (ItemUtils.isFishingRod(event.getOriginal())) {
+        if (!event.getEntity().level().isClientSide() && ItemUtils.isFishingRod(event.getOriginal())) {
             ItemStack bobber = ItemUtils.getBobber(event.getOriginal(), event.getEntity().registryAccess());
             if (!bobber.isEmpty()) {
-                event.getEntity().spawnAtLocation(bobber);
+                event.getEntity().spawnAtLocation((ServerLevel) event.getEntity().level(), bobber);
             }
         }
     }
 
     @SubscribeEvent
-    public static void onAddReloadListeners(final AddReloadListenerEvent event) {
-        event.addListener(FishBehaviorReloadListener.create());
-        event.addListener(MinigameModifiersReloadListener.getOrCreate());
+    public static void onAddReloadListeners(final AddServerReloadListenersEvent event) {
+        event.addListener(StardewFishing.identifier("fish_behaviors"), FishBehaviorReloadListener.create());
+        event.addListener(StardewFishing.identifier("minigame_modifiers"), MinigameModifiersReloadListener.getOrCreate());
     }
 
     @SubscribeEvent

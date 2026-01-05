@@ -5,7 +5,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class SFSoundEvents {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, StardewFishing.MODID);
 
@@ -27,6 +29,6 @@ public class SFSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> CHEST_GET = registerSound("chest_get");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSound(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StardewFishing.resource(name)));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StardewFishing.identifier(name)));
     }
 }

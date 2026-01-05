@@ -10,10 +10,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.function.Supplier;
 
+@NullMarked
 public class SFItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(StardewFishing.MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, StardewFishing.MODID);

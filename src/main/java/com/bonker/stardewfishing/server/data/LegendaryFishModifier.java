@@ -7,7 +7,7 @@ import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -29,14 +29,14 @@ import java.util.List;
 public class LegendaryFishModifier implements IGlobalLootModifier {
     public static final MapCodec<LegendaryFishModifier> CODEC = MapCodec.unit(LegendaryFishModifier::new);
 
-    private static final List<ResourceLocation> FISHING_LOOT_TABLES = List.of(
-            BuiltInLootTables.FISHING.location(),
-            ResourceLocation.fromNamespaceAndPath("aquaculture", "gameplay/fishing/fish"),
-            ResourceLocation.fromNamespaceAndPath("aquaculture", "gameplay/fishing/lava/fish"),
-            ResourceLocation.fromNamespaceAndPath("aquaculture", "gameplay/fishing/nether/fish"),
-            ResourceLocation.fromNamespaceAndPath("tide", "gameplay/fishing/climates/"),
-            ResourceLocation.fromNamespaceAndPath("tide", "gameplay/fishing/special/"),
-            ResourceLocation.fromNamespaceAndPath("tide", "gameplay/fishing/special")
+    private static final List<Identifier> FISHING_LOOT_TABLES = List.of(
+            BuiltInLootTables.FISHING.identifier(),
+            Identifier.fromNamespaceAndPath("aquaculture", "gameplay/fishing/fish"),
+            Identifier.fromNamespaceAndPath("aquaculture", "gameplay/fishing/lava/fish"),
+            Identifier.fromNamespaceAndPath("aquaculture", "gameplay/fishing/nether/fish"),
+            Identifier.fromNamespaceAndPath("tide", "gameplay/fishing/climates/"),
+            Identifier.fromNamespaceAndPath("tide", "gameplay/fishing/special/"),
+            Identifier.fromNamespaceAndPath("tide", "gameplay/fishing/special")
     );
 
     private static final List<Vector2i> BIOME_CHECK_OFFSETS = List.of(
@@ -57,7 +57,7 @@ public class LegendaryFishModifier implements IGlobalLootModifier {
             return generatedLoot;
         }
 
-        if (LootContextParamSets.FISHING.getRequired().stream().anyMatch(param -> !context.hasParam(param))) {
+        if (LootContextParamSets.FISHING.required().stream().anyMatch(param -> !context.hasParameter(param))) {
             // not a fishing loot context
             return generatedLoot;
         }
@@ -75,14 +75,14 @@ public class LegendaryFishModifier implements IGlobalLootModifier {
             return generatedLoot;
         }
 
-        ResourceLocation lootId = context.getQueriedLootTableId();
+        Identifier lootId = context.getQueriedLootTableId();
         if (FISHING_LOOT_TABLES.stream().noneMatch(id -> lootId.getNamespace().equals(id.getNamespace()) && lootId.getPath().startsWith(id.getPath()))) {
             // this isn't a fishing loot table
             return generatedLoot;
         }
 
         ServerLevel level = context.getLevel();
-        BlockPos pos = BlockPos.containing(context.getParam(LootContextParams.ORIGIN));
+        BlockPos pos = BlockPos.containing(context.getParameter(LootContextParams.ORIGIN));
 
         LegendaryCategory category = findLegendaryCategory(level, pos);
         if (category != null) {

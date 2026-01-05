@@ -7,22 +7,18 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -36,13 +32,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import java.util.List;
 
 public class FishDisplayBlock extends HorizontalDirectionalBlock implements EntityBlock, SimpleWaterloggedBlock {
     private static final MapCodec<FishDisplayBlock> CODEC = simpleCodec(FishDisplayBlock::new);
@@ -51,7 +44,7 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
     private static final VoxelShape SHAPE_SOUTH = box(15, 2, 0, 16, 14, 16);
     private static final VoxelShape SHAPE_WEST = box(0, 2, 15, 16, 14, 16);
     private static final VoxelShape SHAPE_EAST = box(0, 2, 0, 16, 14, 1);
-    private static final Component TOOLTIP = Component.translatable("item.stardew_fishing.fish_display.tooltip")
+    public static final Component TOOLTIP = Component.translatable("item.stardew_fishing.fish_display.tooltip")
             .withStyle(StardewFishing.LIGHTER_COLOR);
 
     public FishDisplayBlock(Properties pProperties) {
@@ -68,9 +61,8 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
         return stack.is(StardewFishing.IN_FISH_DISPLAY);
     }
 
-
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof FishDisplayBlockEntity fishDisplay) {
             ItemStack displayed = fishDisplay.getItem();
@@ -83,7 +75,7 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
                     }
                     level.playSound(player, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
                     player.swing(hand);
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             } else {
                 if (!player.getAbilities().instabuild) {
@@ -92,11 +84,11 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
                 fishDisplay.setItem(ItemStack.EMPTY);
                 level.playSound(player, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
                 player.swing(hand);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
@@ -119,19 +111,10 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(TOOLTIP);
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (!pState.is(pNewState.getBlock())) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof FishDisplayBlockEntity fishDisplay) {
-                Containers.dropItemStack(pLevel, pPos.getX(), pPos.getY(), pPos.getZ(), fishDisplay.getItem());
-            }
-
-            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof FishDisplayBlockEntity fishDisplay) {
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), fishDisplay.getItem());
         }
     }
 
@@ -166,7 +149,7 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof FishDisplayBlockEntity fishDisplay) {
             ItemStack stack = fishDisplay.getItem();
@@ -174,7 +157,7 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
                 return stack.copyWithCount(1);
             }
         }
-        return super.getCloneItemStack(state, target, level, pos, player);
+        return super.getCloneItemStack(level, pos, state, includeData, player);
     }
 
     @Override
@@ -183,11 +166,11 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
-        if (pState.getValue(WATERLOGGED)) {
-            pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        if (state.getValue(WATERLOGGED)) {
+            scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
 
-        return super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
+        return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
     }
 }

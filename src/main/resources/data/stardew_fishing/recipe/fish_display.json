@@ -6,12 +6,8 @@
     ".#."
   ],
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    },
-    ".": {
-      "item": "minecraft:gold_nugget"
-    }
+    "#": "#minecraft:planks",
+    ".": "minecraft:gold_nugget"
   },
   "result": {
     "id": "stardew_fishing:fish_display",

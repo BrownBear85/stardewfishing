@@ -17,11 +17,13 @@ import javax.annotation.Nullable;
 
 @Mod(value = StardewFishing.MODID, dist = Dist.CLIENT)
 public class StardewFishingClient {
+    public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(StardewFishing.identifier("keys"));
+
     public static final Lazy<KeyMapping> MINIGAME_BUTTON = Lazy.of(() -> new KeyMapping(
             "key.stardew_fishing.minigame_button",
             KeyConflictContext.GUI,
             InputConstants.Type.MOUSE.getOrCreate(GLFW.GLFW_MOUSE_BUTTON_1),
-            "key.categories.stardew_fishing"));
+            CATEGORY));
 
     public StardewFishingClient(ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, SFConfig.CLIENT_SPEC);

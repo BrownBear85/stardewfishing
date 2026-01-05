@@ -32,10 +32,12 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@NullMarked
 public class SFCommands {
     private static final DynamicCommandExceptionType NO_BEHAVIOR = new DynamicCommandExceptionType(obj -> Component.translatable("commands.stardew_fishing.no_behavior", obj));
     private static final SimpleCommandExceptionType NO_ROD = new SimpleCommandExceptionType(Component.translatable("commands.stardew_fishing.no_rod"));
@@ -50,7 +52,7 @@ public class SFCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         dispatcher.register(Commands.literal("stardew_fishing")
                 .then(Commands.literal("start_minigame")
-                        .requires(stack -> stack.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(stack -> Commands.LEVEL_GAMEMASTERS.check(stack.permissions()))
                         .then(Commands.argument("item", new FishBehaviorArgument(buildContext))
                                         .executes(SFCommands::startMinigame)))
                 .then(Commands.literal("toggle_minigame")

@@ -6,15 +6,9 @@
     "yxy"
   ],
   "key": {
-    "x": {
-      "item": "minecraft:observer"
-    },
-    "y": {
-      "item": "minecraft:copper_ingot"
-    },
-    "z": {
-      "item": "minecraft:amethyst_shard"
-    }
+    "x": "minecraft:observer",
+    "y": "minecraft:copper_ingot",
+    "z": "minecraft:amethyst_shard"
   },
   "result": {
     "id": "stardew_fishing:sonar_bobber",

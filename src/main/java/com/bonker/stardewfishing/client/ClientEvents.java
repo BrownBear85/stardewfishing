@@ -46,8 +46,8 @@ public class ClientEvents {
             }
 
             SoundEvent newEvent = null;
-            if (instance instanceof SimpleSoundInstance && instance.getLocation().getNamespace().equals("minecraft")) {
-                switch (instance.getLocation().getPath()) {
+            if (instance instanceof SimpleSoundInstance && instance.getIdentifier().getNamespace().equals("minecraft")) {
+                switch (instance.getIdentifier().getPath()) {
                     case "entity.fishing_bobber.throw" -> newEvent = SFSoundEvents.CAST.get();
                     case "entity.fishing_bobber.retrieve" -> {
                         if (Minecraft.getInstance().level == null) break;
@@ -68,7 +68,7 @@ public class ClientEvents {
                         instance.getX(),
                         instance.getY(),
                         instance.getZ()));
-            } else if (SFConfig.isolateAudioCues() && !instance.getLocation().getNamespace().equals(StardewFishing.MODID) && Minecraft.getInstance().screen instanceof FishingScreen) {
+            } else if (SFConfig.isolateAudioCues() && !instance.getIdentifier().getNamespace().equals(StardewFishing.MODID) && Minecraft.getInstance().screen instanceof FishingScreen) {
                 event.setSound(null);
             }
         } catch (Exception e) {
@@ -90,11 +90,12 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRegisterKeyBindings(RegisterKeyMappingsEvent event) {
+        event.registerCategory(StardewFishingClient.CATEGORY);
         event.register(StardewFishingClient.MINIGAME_BUTTON.get());
     }
 
     @SubscribeEvent
-    public static void onAddClientReloadListeners(final RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(DimensionTextureManager.getOrCreate());
+    public static void onAddClientReloadListeners(final AddClientReloadListenersEvent event) {
+        event.addListener(StardewFishing.identifier("dimension_texture_manager"), DimensionTextureManager.getOrCreate());
     }
 }

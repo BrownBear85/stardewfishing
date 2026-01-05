@@ -8,13 +8,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public record S2CStartMinigamePacket(int idleTime, float topSpeed, float upAcceleration, float downAcceleration,
                                      int avgDistance, int moveVariation, ItemStack fish, boolean treasureChest,
                                      boolean goldenChest, float lineStrength, int barSize)
         implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<S2CStartMinigamePacket> TYPE =
-            new CustomPacketPayload.Type<>(StardewFishing.resource("s2c_start_minigame"));
+            new CustomPacketPayload.Type<>(StardewFishing.identifier("s2c_start_minigame"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CStartMinigamePacket> STREAM_CODEC =
             StreamCodec.of((buf, value) -> value.encode(buf), S2CStartMinigamePacket::new);

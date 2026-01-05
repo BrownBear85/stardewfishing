@@ -1,21 +1,25 @@
 package com.bonker.stardewfishing.server.data;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@NullMarked
 public class MinigameDisabledPlayers extends SavedData {
-    private static final Factory<MinigameDisabledPlayers> factory = new Factory<>(MinigameDisabledPlayers::new,
-            (compoundTag, provider) -> new MinigameDisabledPlayers(compoundTag));
+    public static final Codec<MinigameDisabledPlayers> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+            UUIDUtil.CODEC.listOf().fieldOf("minigame_disabled_for").forGetter(o -> o.players)
+    ).apply(inst, MinigameDisabledPlayers::new));
+
+    public static final SavedDataType<MinigameDisabledPlayers> TYPE = new SavedDataType<>("minigame_disabled_players", MinigameDisabledPlayers::new, CODEC);
 
     private final List<UUID> players = new ArrayList<>();
 
@@ -23,21 +27,8 @@ public class MinigameDisabledPlayers extends SavedData {
 
     }
 
-    private MinigameDisabledPlayers(CompoundTag compoundTag) {
-        ListTag list = compoundTag.getList("minigame_disabled_for", Tag.TAG_INT_ARRAY);
-        for (Tag tag : list) {
-            players.add(NbtUtils.loadUUID(tag));
-        }
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        ListTag list = new ListTag(Tag.TAG_INT_ARRAY);
-        for (UUID uuid : players) {
-            list.add(NbtUtils.createUUID(uuid));
-        }
-        compoundTag.put("minigame_disabled_for", list);
-        return compoundTag;
+    private MinigameDisabledPlayers(List<UUID> list) {
+        players.addAll(list);
     }
 
     public boolean isMinigameDisabled(ServerPlayer player) {
@@ -60,6 +51,6 @@ public class MinigameDisabledPlayers extends SavedData {
     }
 
     public static MinigameDisabledPlayers get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(factory, "disabled_minigame_players");
+        return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 }

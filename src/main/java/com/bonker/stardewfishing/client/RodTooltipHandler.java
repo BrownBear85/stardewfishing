@@ -11,15 +11,16 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 
 public class RodTooltipHandler {
-    private static final ResourceLocation TEXTURE = StardewFishing.resource("textures/gui/tooltip.png");
+    private static final Identifier TEXTURE = StardewFishing.identifier("textures/gui/tooltip.png");
     private static final Multimap<Slot, Tooltip> MAP = HashMultimap.create();
     private static int soundTimer = 0;
 
@@ -127,15 +128,15 @@ public class RodTooltipHandler {
         }
 
         public void render(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, 370);
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(0, 0/*, 370*/);
 
             RenderUtil.drawWithShake(guiGraphics.pose(), shake, partialTick, true, () -> {
                 RenderUtil.drawWithBlend(() -> renderSlot(guiGraphics, partialTick));
             });
             RenderUtil.drawWithBlend(() -> renderMouse(guiGraphics, partialTick, mouseX, mouseY));
 
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
 
         private void renderSlot(GuiGraphics guiGraphics, float partialTick) {
@@ -145,13 +146,13 @@ public class RodTooltipHandler {
             float x = (1 / anim) * (slot.x + 8);
             float y = (1 / anim) * (slot.y + 8);
 
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(anim, anim, 1);
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().scale(anim, anim);
 
-            RenderUtil.blitF(guiGraphics, TEXTURE, x - 35, y - 12, 0, 0, 29, 27);
+            RenderUtil.blitF(guiGraphics, RenderPipelines.GUI_TEXTURED, TEXTURE, x - 35, y - 12, 0, 0, 29, 27);
             RenderUtil.renderItemF(guiGraphics, ItemUtils.getBobber(stack, Minecraft.getInstance().level.registryAccess()), x - 30, y - 8);
 
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
 
         private void renderMouse(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
@@ -159,12 +160,12 @@ public class RodTooltipHandler {
             float x = (1 / anim) * (mouseX);
             float y = (1 / anim) * (mouseY);
 
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(anim, anim, 1);
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().scale(anim, anim);
 
-            RenderUtil.blitF(guiGraphics, TEXTURE, x + 3, y + 3, 33, 0, 11, 19);
+            RenderUtil.blitF(guiGraphics, RenderPipelines.GUI_TEXTURED, TEXTURE, x + 3, y + 3, 33, 0, 11, 19);
 
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
     }
 }

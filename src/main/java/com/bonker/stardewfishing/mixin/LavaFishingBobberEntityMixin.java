@@ -28,50 +28,50 @@ import java.util.List;
 @Pseudo
 @Mixin(targets = "com.scouter.netherdepthsupgrade.entity.entities.LavaFishingBobberEntity")
 public abstract class LavaFishingBobberEntityMixin extends FishingHook {
-    @Shadow private int nibble;
-
-    @Shadow private int timeUntilHooked;
-
-    @Shadow private int timeUntilLured;
-
-    @Shadow @Final private int lureSpeed;
+//    @Shadow private int nibble;
+//
+//    @Shadow private int timeUntilHooked;
+//
+//    @Shadow private int timeUntilLured;
+//
+//    @Shadow @Final private int lureSpeed;
 
     private LavaFishingBobberEntityMixin(EntityType<? extends FishingHook> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    @Inject(method = "catchingFish(Lnet/minecraft/core/BlockPos;)V", at = @At(value = "HEAD"), cancellable = true, remap = false)
-    private void cancel_catchingFish(BlockPos pPos, CallbackInfo ci) {
-        if (nibble <= 0 && timeUntilHooked <= 0 && timeUntilLured <= 0) {
-            // replicate vanilla
-            timeUntilLured = Mth.nextInt(random, 100, 600);
-            timeUntilLured -= lureSpeed * 20 * 5;
-
-            // apply configurable reduction
-            timeUntilLured = Math.max(10, (int) (timeUntilLured * SFConfig.getBiteTimeMultiplier()));
-        }
-
-        if (!FishingHookAttachment.get(this).getRewards().isEmpty()) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "retrieve(Lnet/minecraft/world/item/ItemStack;)I",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/neoforged/bus/api/IEventBus;post(Lnet/neoforged/bus/api/Event;)Lnet/neoforged/bus/api/Event;"),
-            cancellable = true)
-    public void retrieve(ItemStack pStack, CallbackInfoReturnable<Integer> cir, @Local List<ItemStack> items) {
-        ServerPlayer player = (ServerPlayer) getPlayerOwner();
-        if (player == null) return;
-
-        if (items.stream().anyMatch(stack -> stack.is(StardewFishing.STARTS_MINIGAME))) {
-            FishingHookAttachment.get(this).getRewards().addAll(items);
-            if (FishingHookLogic.startStardewMinigame(player)) {
-                cir.cancel();
-            }
-        } else {
-            FishingHookLogic.modifyRewards(items, 0, 0);
-            player.level().playSound(null, player, SFSoundEvents.PULL_ITEM.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-        }
-    }
+//    @Inject(method = "catchingFish(Lnet/minecraft/core/BlockPos;)V", at = @At(value = "HEAD"), cancellable = true, remap = false)
+//    private void cancel_catchingFish(BlockPos pPos, CallbackInfo ci) {
+//        if (nibble <= 0 && timeUntilHooked <= 0 && timeUntilLured <= 0) {
+//            // replicate vanilla
+//            timeUntilLured = Mth.nextInt(random, 100, 600);
+//            timeUntilLured -= lureSpeed * 20 * 5;
+//
+//            // apply configurable reduction
+//            timeUntilLured = Math.max(10, (int) (timeUntilLured * SFConfig.getBiteTimeMultiplier()));
+//        }
+//
+//        if (!FishingHookAttachment.get(this).getRewards().isEmpty()) {
+//            ci.cancel();
+//        }
+//    }
+//
+//    @Inject(method = "retrieve(Lnet/minecraft/world/item/ItemStack;)I",
+//            at = @At(value = "INVOKE",
+//                    target = "Lnet/neoforged/bus/api/IEventBus;post(Lnet/neoforged/bus/api/Event;)Lnet/neoforged/bus/api/Event;"),
+//            cancellable = true)
+//    public void retrieve(ItemStack pStack, CallbackInfoReturnable<Integer> cir, @Local List<ItemStack> items) {
+//        ServerPlayer player = (ServerPlayer) getPlayerOwner();
+//        if (player == null) return;
+//
+//        if (items.stream().anyMatch(stack -> stack.is(StardewFishing.STARTS_MINIGAME))) {
+//            FishingHookAttachment.get(this).getRewards().addAll(items);
+//            if (FishingHookLogic.startStardewMinigame(player)) {
+//                cir.cancel();
+//            }
+//        } else {
+//            FishingHookLogic.modifyRewards(items, 0, 0);
+//            player.level().playSound(null, player, SFSoundEvents.PULL_ITEM.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+//        }
+//    }
 }

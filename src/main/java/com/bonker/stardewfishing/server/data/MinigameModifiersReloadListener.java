@@ -8,7 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class MinigameModifiersReloadListener extends SimplePreparableReloadListener<Map<String, JsonObject>> implements MinigameModifiersSupplier {
     private static final Gson GSON_INSTANCE = new Gson();
-    private static final ResourceLocation LOCATION = StardewFishing.resource("minigame_modifiers.json");
+    private static final Identifier LOCATION = StardewFishing.identifier("minigame_modifiers.json");
     @Nullable
     private static MinigameModifiersReloadListener INSTANCE;
 
@@ -53,7 +53,7 @@ public class MinigameModifiersReloadListener extends SimplePreparableReloadListe
             ModifiersList.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
                     .resultOrPartial(errorMsg -> StardewFishing.LOGGER.warn("Failed to decode minigame modifiers list {} in data pack {} - {}", LOCATION, entry.getKey(), errorMsg))
                     .ifPresent(behaviorList -> behaviorList.modifiers.forEach((loc, minigameModifiers) -> {
-                        Item item = BuiltInRegistries.ITEM.get(loc);
+                        Item item = BuiltInRegistries.ITEM.getValue(loc);
                         if (item == Items.AIR) {
                             if (ModList.get().isLoaded(loc.getNamespace())) {
                                 StardewFishing.LOGGER.warn("Mod '{}' present but item not registered: {}. Is the id incorrect?", loc.getNamespace(), loc.getPath());
@@ -84,10 +84,10 @@ public class MinigameModifiersReloadListener extends SimplePreparableReloadListe
         return modifiers;
     }
 
-    private record ModifiersList(boolean replace, Map<ResourceLocation, MinigameModifiers> modifiers) {
+    private record ModifiersList(boolean replace, Map<Identifier, MinigameModifiers> modifiers) {
         private static final Codec<ModifiersList> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 Codec.BOOL.optionalFieldOf("replace", false).forGetter(ModifiersList::replace),
-                Codec.unboundedMap(ResourceLocation.CODEC, MinigameModifiers.CODEC).fieldOf("modifiers").forGetter(ModifiersList::modifiers)
+                Codec.unboundedMap(Identifier.CODEC, MinigameModifiers.CODEC).fieldOf("modifiers").forGetter(ModifiersList::modifiers)
         ).apply(inst, ModifiersList::new));
     }
 }

@@ -10,13 +10,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 public record S2CSyncModifiersPacket(Map<Item, MinigameModifiers> data) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<S2CSyncModifiersPacket> TYPE =
-            new CustomPacketPayload.Type<>(StardewFishing.resource("s2c_sync_modifiers"));
+            new CustomPacketPayload.Type<>(StardewFishing.identifier("s2c_sync_modifiers"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CSyncModifiersPacket> STREAM_CODEC =
             StreamCodec.of((buf, value) -> value.encode(buf), S2CSyncModifiersPacket::fromBytes);
@@ -25,7 +27,7 @@ public record S2CSyncModifiersPacket(Map<Item, MinigameModifiers> data) implemen
         int size = buf.readVarInt();
         Map<Item, MinigameModifiers> data = new HashMap<>(size);
         for (int i = 0; i < size; i++) {
-            Item item = BuiltInRegistries.ITEM.get(buf.readResourceLocation());
+            Item item = BuiltInRegistries.ITEM.getValue(buf.readIdentifier());
             MinigameModifiers modifiers = MinigameModifiers.read(buf);
             data.put(item, modifiers);
         }
@@ -35,7 +37,7 @@ public record S2CSyncModifiersPacket(Map<Item, MinigameModifiers> data) implemen
     public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(data.size());
         for (Map.Entry<Item, MinigameModifiers> entry : data.entrySet()) {
-            buf.writeResourceLocation(BuiltInRegistries.ITEM.getKey(entry.getKey()));
+            buf.writeIdentifier(BuiltInRegistries.ITEM.getKey(entry.getKey()));
             entry.getValue().write(buf);
         }
     }

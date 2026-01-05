@@ -6,12 +6,8 @@
     "xx"
   ],
   "key": {
-    "x": {
-      "tag": "c:stripped_logs"
-    },
-    "y": {
-      "item": "minecraft:barrel"
-    }
+    "x": "#c:stripped_logs",
+    "y": "minecraft:barrel"
   },
   "result": {
     "id": "stardew_fishing:cork_bobber",

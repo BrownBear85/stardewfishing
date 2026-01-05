@@ -2,11 +2,11 @@ package com.bonker.stardewfishing.proxy;
 
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.init.SFComponentTypes;
+import com.bonker.stardewfishing.common.items.Bobber;
 import com.bonker.stardewfishing.common.items.LegendaryCatch;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -29,7 +29,7 @@ public class ItemUtils {
             return TideProxy.getBobber(fishingRod, registryAccess);
         } else {
             return fishingRod.has(SFComponentTypes.BOBBER) ?
-                    ItemStack.parseOptional(registryAccess, Objects.requireNonNull(fishingRod.get(SFComponentTypes.BOBBER))) :
+                    Objects.requireNonNull(fishingRod.get(SFComponentTypes.BOBBER)).item() :
                     ItemStack.EMPTY;
         }
     }
@@ -63,7 +63,7 @@ public class ItemUtils {
             if (bobber.isEmpty()) {
                 fishingRod.remove(SFComponentTypes.BOBBER);
             } else {
-                fishingRod.set(SFComponentTypes.BOBBER, (CompoundTag) bobber.save(registryAccess, new CompoundTag()));
+                fishingRod.set(SFComponentTypes.BOBBER, new Bobber(bobber));
             }
         }
     }
@@ -90,10 +90,10 @@ public class ItemUtils {
         }
 
         ItemStack bobberCache = bobber.copy();
-        bobber.hurtAndBreak(1, player.serverLevel(), player, item -> {
-            player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS);
+        bobber.hurtAndBreak(1, player.level(), player, item -> {
+            player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS);
             Vec3 particlePos = player.getEyePosition().add(player.getLookAngle());
-            player.serverLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobberCache), particlePos.x(), particlePos.y(), particlePos.z(), 8, 0.1, 0.1, 0.1, 0.1);
+            player.level().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobberCache), particlePos.x(), particlePos.y(), particlePos.z(), 8, 0.1, 0.1, 0.1, 0.1);
             player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobberCache.getHoverName()), true);
         });
         return Optional.of(bobber);

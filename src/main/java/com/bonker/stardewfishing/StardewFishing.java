@@ -11,13 +11,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -41,20 +40,20 @@ public class StardewFishing {
     public static final boolean TIDE_INSTALLED = ModList.get().isLoaded("tide");
     public static final boolean COBBLEMON_INSTALLED = ModList.get().isLoaded("cobblemon");
 
-    public static final TagKey<Item> STARTS_MINIGAME = TagKey.create(Registries.ITEM, resource("starts_minigame"));
-    public static final TagKey<Item> MODIFIABLE_RODS = TagKey.create(Registries.ITEM, resource("modifiable_rods"));
-    public static final TagKey<Item> BOBBERS = TagKey.create(Registries.ITEM, resource("bobbers"));
-    public static final TagKey<Item> LEGENDARY_FISH = TagKey.create(Registries.ITEM, resource("legendary_fish"));
-    public static final TagKey<Item> IN_FISH_DISPLAY = TagKey.create(Registries.ITEM, resource("in_fish_display"));
+    public static final TagKey<Item> STARTS_MINIGAME = TagKey.create(Registries.ITEM, identifier("starts_minigame"));
+    public static final TagKey<Item> MODIFIABLE_RODS = TagKey.create(Registries.ITEM, identifier("modifiable_rods"));
+    public static final TagKey<Item> BOBBERS = TagKey.create(Registries.ITEM, identifier("bobbers"));
+    public static final TagKey<Item> LEGENDARY_FISH = TagKey.create(Registries.ITEM, identifier("legendary_fish"));
+    public static final TagKey<Item> IN_FISH_DISPLAY = TagKey.create(Registries.ITEM, identifier("in_fish_display"));
 
-    public static final TagKey<Biome> HAS_NORMAL_OCEAN_FISH = TagKey.create(Registries.BIOME, resource("has_normal_ocean_fish"));
-    public static final TagKey<Biome> HAS_WARM_OCEAN_FISH = TagKey.create(Registries.BIOME, resource("has_warm_ocean_fish"));
-    public static final TagKey<Biome> HAS_RIVER_FISH = TagKey.create(Registries.BIOME, resource("has_river_fish"));
-    public static final TagKey<Biome> HAS_ARID_FISH = TagKey.create(Registries.BIOME, resource("has_arid_fish"));
-    public static final TagKey<Biome> HAS_JUNGLE_FISH = TagKey.create(Registries.BIOME, resource("has_jungle_fish"));
+    public static final TagKey<Biome> HAS_NORMAL_OCEAN_FISH = TagKey.create(Registries.BIOME, identifier("has_normal_ocean_fish"));
+    public static final TagKey<Biome> HAS_WARM_OCEAN_FISH = TagKey.create(Registries.BIOME, identifier("has_warm_ocean_fish"));
+    public static final TagKey<Biome> HAS_RIVER_FISH = TagKey.create(Registries.BIOME, identifier("has_river_fish"));
+    public static final TagKey<Biome> HAS_ARID_FISH = TagKey.create(Registries.BIOME, identifier("has_arid_fish"));
+    public static final TagKey<Biome> HAS_JUNGLE_FISH = TagKey.create(Registries.BIOME, identifier("has_jungle_fish"));
 
-    public static final ResourceKey<LootTable> TREASURE_CHEST_LOOT = resource(Registries.LOOT_TABLE, "treasure_chest");
-    public static final ResourceKey<LootTable> TREASURE_CHEST_NETHER_LOOT = resource(Registries.LOOT_TABLE, "treasure_chest_nether");
+    public static final ResourceKey<LootTable> TREASURE_CHEST_LOOT = resourceKey(Registries.LOOT_TABLE, "treasure_chest");
+    public static final ResourceKey<LootTable> TREASURE_CHEST_NETHER_LOOT = resourceKey(Registries.LOOT_TABLE, "treasure_chest_nether");
 
     public static String MOD_NAME;
 
@@ -84,17 +83,17 @@ public class StardewFishing {
         container.registerConfig(ModConfig.Type.SERVER, SFConfig.SERVER_SPEC);
     }
     
-    public static ResourceLocation resource(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static Identifier identifier(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 
-    public static <T> ResourceKey<T> resource(ResourceKey<Registry<T>> registryKey, String path) {
-        return ResourceKey.create(registryKey, resource(path));
+    public static <T> ResourceKey<T> resourceKey(ResourceKey<Registry<T>> registryKey, String path) {
+        return ResourceKey.create(registryKey, identifier(path));
     }
 
     public static Optional<MinigameModifiers> getModifiers(ItemStack stack) {
         MinigameModifiersSupplier modifiersSupplier;
-        if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
+        if (FMLEnvironment.getDist().isDedicatedServer()) {
             modifiersSupplier = MinigameModifiersReloadListener.getOrCreate();
         } else {
             modifiersSupplier = StardewFishingClient.modifiersSupplier;

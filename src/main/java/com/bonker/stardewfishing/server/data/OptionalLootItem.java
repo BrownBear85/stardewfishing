@@ -4,7 +4,7 @@ import com.bonker.stardewfishing.common.init.SFLootPoolEntryTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,10 +23,10 @@ import java.util.function.Consumer;
 
 public class OptionalLootItem extends LootPoolSingletonContainer {
     public static final MapCodec<OptionalLootItem> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            ResourceLocation.CODEC.fieldOf("name").forGetter(o -> o.itemId)
+            Identifier.CODEC.fieldOf("name").forGetter(o -> o.itemId)
     ).and(singletonFields(inst)).apply(inst, OptionalLootItem::new));
 
-    private final ResourceLocation itemId;
+    private final Identifier itemId;
     @Nullable
     private final Item item;
     private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
@@ -36,10 +36,10 @@ public class OptionalLootItem extends LootPoolSingletonContainer {
         }
     };
 
-    protected OptionalLootItem(ResourceLocation itemId, int pWeight, int pQuality, List<LootItemCondition> pConditions, List<LootItemFunction> pFunctions) {
+    protected OptionalLootItem(Identifier itemId, int pWeight, int pQuality, List<LootItemCondition> pConditions, List<LootItemFunction> pFunctions) {
         super(pWeight, pQuality, pConditions, pFunctions);
         this.itemId = itemId;
-        Item item = BuiltInRegistries.ITEM.get(itemId);
+        Item item = BuiltInRegistries.ITEM.getValue(itemId);
         this.item = item == Items.AIR ? null : item;
         this.compositeFunction = LootItemFunctions.compose(pFunctions);
     }

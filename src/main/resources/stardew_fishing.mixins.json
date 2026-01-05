@@ -3,11 +3,8 @@
   "package": "com.bonker.stardewfishing.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AquaFishingBobberEntityMixin",
     "FishingHookAccessor",
-    "FishingHookMixin",
-    "LavaFishingBobberEntityMixin",
-    "PokeRodFishingBobberEntityMixin"
+    "FishingHookMixin"
   ],
   "injectors": {
     "defaultRequire": 1

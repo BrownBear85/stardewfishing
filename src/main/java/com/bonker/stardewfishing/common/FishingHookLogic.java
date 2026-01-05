@@ -2,7 +2,6 @@ package com.bonker.stardewfishing.common;
 
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
-import com.bonker.stardewfishing.common.init.SFComponentTypes;
 import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.init.SFSoundEvents;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
@@ -47,7 +46,7 @@ import java.util.List;
 public class FishingHookLogic {
     public static boolean startStardewMinigame(ServerPlayer player) {
         if (player.fishing == null || player instanceof FakePlayer ||
-                MinigameDisabledPlayers.get(player.server).isMinigameDisabled(player)) return false;
+                MinigameDisabledPlayers.get(player.level().getServer()).isMinigameDisabled(player)) return false;
 
         FishingHookAttachment data = FishingHookAttachment.get(player.fishing);
 
@@ -109,7 +108,7 @@ public class FishingHookLogic {
             NeoForge.EVENT_BUS.post(endEvent);
         }
 
-        if (endEvent.wasSuccessful() && !player.level().isClientSide) {
+        if (endEvent.wasSuccessful() && !player.level().isClientSide()) {
             modifyRewards(player, endEvent.getAccuracy(), qualityBoost);
             giveRewards(player, endEvent.getAccuracy(), endEvent.gotChest(), fishingRod);
         }
@@ -145,7 +144,7 @@ public class FishingHookLogic {
         rewards.unlock();
 
         if (data.hasTreasureChest() && gotChest) {
-            rewards.addAll(getTreasureChestLoot(player.serverLevel(), data.hasGoldenChest()));
+            rewards.addAll(getTreasureChestLoot(player.level(), data.hasGoldenChest()));
         }
 
         StardewMinigameModifyRewardsEvent modifyRewardsEvent = new StardewMinigameModifyRewardsEvent(player, hook, fishingRod, rewards);
@@ -161,7 +160,7 @@ public class FishingHookLogic {
             return;
         }
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         for (ItemStack reward : rewards) {
             InteractionHand hand = ItemUtils.getRodHand(player);
             ItemStack handItem = hand != null ? player.getItemInHand(hand) : ItemStack.EMPTY;

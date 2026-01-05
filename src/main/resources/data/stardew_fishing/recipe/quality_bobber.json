@@ -6,15 +6,9 @@
     "z  "
   ],
   "key": {
-    "x": {
-      "item": "minecraft:diamond"
-    },
-    "y": {
-      "item": "minecraft:prismarine_crystals"
-    },
-    "z": {
-      "item": "minecraft:prismarine_shard"
-    }
+    "x": "minecraft:diamond",
+    "y": "minecraft:prismarine_crystals",
+    "z": "minecraft:prismarine_shard"
   },
   "result": {
     "id": "stardew_fishing:quality_bobber",

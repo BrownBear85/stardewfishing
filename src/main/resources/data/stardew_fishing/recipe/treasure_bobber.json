@@ -6,18 +6,10 @@
     " a "
   ],
   "key": {
-    "x": {
-      "item": "minecraft:gold_ingot"
-    },
-    "y": {
-      "item": "minecraft:iron_ingot"
-    },
-    "z": {
-      "item": "minecraft:redstone_block"
-    },
-    "a": {
-      "item": "minecraft:tripwire_hook"
-    }
+    "x": "minecraft:gold_ingot",
+    "y": "minecraft:iron_ingot",
+    "z": "minecraft:redstone_block",
+    "a": "minecraft:tripwire_hook"
   },
   "result": {
     "id": "stardew_fishing:treasure_bobber",
