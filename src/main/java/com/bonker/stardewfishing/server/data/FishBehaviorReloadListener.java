@@ -70,7 +70,7 @@ public class FishBehaviorReloadListener extends SimplePreparableReloadListener<M
                             Item item = BuiltInRegistries.ITEM.getValue(loc);
                             if (item == Items.AIR) {
                                 if (ModList.get().isLoaded(loc.getNamespace())) {
-                                    throw new RuntimeException(makeError(entry.getKey(), "Mod '" + loc.getNamespace() + "' present but item not registered: " + loc.getPath()));
+                                    StardewFishing.LOGGER.warn("Mod '{}' present but item not registered: {}. Is the id incorrect?", loc.getNamespace(), loc.getPath());
                                 }
                             } else {
                                 if (behaviorList.replace || !fishBehaviors.containsKey(item)) {
