@@ -4,11 +4,12 @@ import com.bonker.stardewfishing.common.init.SFBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class FishDisplayBlockEntity extends BlockEntity {
+public class FishDisplayBlockEntity extends BlockEntity implements Clearable {
     private ItemStack item = ItemStack.EMPTY;
 
     public FishDisplayBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -53,5 +54,10 @@ public class FishDisplayBlockEntity extends BlockEntity {
         CompoundTag nbt = new CompoundTag();
         saveAdditional(nbt);
         return nbt;
+    }
+
+    @Override
+    public void clearContent() {
+        item = ItemStack.EMPTY;
     }
 }
