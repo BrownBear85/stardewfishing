@@ -63,7 +63,7 @@ public abstract class PokeRodFishingBobberEntityMixin extends FishingHook {
     @Redirect(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lcom/cobblemon/mod/common/entity/fishing/PokeRodFishingBobberEntity;checkReduceBiteTime(Lnet/minecraft/world/item/ItemStack;)Z"), remap = false)
     private boolean checkReduceBiteTime(PokeRodFishingBobberEntity instance, ItemStack stack) {
         if (checkReduceBiteTime(stack)) {
-            waitCountdown = alterBiteTimeAttempt(waitCountdown, rodStack == null ? rodStack : bobberBait);
+            waitCountdown = alterBiteTimeAttempt(waitCountdown, rodStack == null ? bobberBait : rodStack);
         }
 
         waitCountdown = Math.max(10, (int) (waitCountdown * SFConfig.getBiteTimeMultiplier()));
