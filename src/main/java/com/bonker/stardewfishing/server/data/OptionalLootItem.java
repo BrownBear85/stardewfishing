@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntry;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
@@ -60,7 +59,7 @@ public class OptionalLootItem extends LootPoolSingletonContainer {
     }
 
     @Override
-    public LootPoolEntryType getType() {
+    public MapCodec<OptionalLootItem> codec() {
         return SFLootPoolEntryTypes.MOD_LOADED.get();
     }
 

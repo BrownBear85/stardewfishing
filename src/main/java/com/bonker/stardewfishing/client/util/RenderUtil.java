@@ -1,16 +1,15 @@
 package com.bonker.stardewfishing.client.util;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Divisor;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -24,14 +23,14 @@ public class RenderUtil {
     private static final int defaultColor = 0xFFFFFFFF;
     private static int color = defaultColor;
 
-    public static void blitF(GuiGraphics guiGraphics, RenderPipeline pipeline, Identifier texture, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight) {
+    public static void blitF(GuiGraphicsExtractor guiGraphics, RenderPipeline pipeline, Identifier texture, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x - (int) x, y - (int) y);
         guiGraphics.blit(pipeline, texture, (int) x, (int) y, uOffset, vOffset, uWidth, vHeight, 256, 256, color);
         guiGraphics.pose().popMatrix();
     }
 
-    public static void fillF(GuiGraphics guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
+    public static void fillF(GuiGraphicsExtractor guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
         if (minX < maxX) {
             float i = minX;
             minX = maxX;
@@ -85,7 +84,7 @@ public class RenderUtil {
         return new Divisor(pTarget, i);
     }
 
-    public static void blitRepeatingF(GuiGraphics guiGraphics, RenderPipeline pipeline, Identifier texture, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight, int sourceWidth, int sourceHeight) {
+    public static void blitRepeatingF(GuiGraphicsExtractor guiGraphics, RenderPipeline pipeline, Identifier texture, float x, float y, int uOffset, int vOffset, int uWidth, int vHeight, int sourceWidth, int sourceHeight) {
         int width;
         for (IntIterator intiterator = slices(uWidth, sourceWidth); intiterator.hasNext(); x += width) {
             width = intiterator.nextInt();
@@ -100,61 +99,13 @@ public class RenderUtil {
         }
     }
 
-    public static void renderItemF(GuiGraphics guiGraphics, ItemStack item, float x, float y) {
+    public static void renderItemF(GuiGraphicsExtractor guiGraphics, ItemStack item, float x, float y) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x - (int) x, y - (int) y);
-        guiGraphics.renderItem(item, (int) x, (int) y);
-        guiGraphics.renderItemDecorations(Minecraft.getInstance().font, item, (int) x, (int) y);
+        guiGraphics.item(item, (int) x, (int) y);
+        guiGraphics.itemDecorations(Minecraft.getInstance().font, item, (int) x, (int) y);
         guiGraphics.pose().popMatrix();
     }
-
-//    public record BlitFRenderState(
-//            RenderPipeline pipeline,
-//            TextureSetup textureSetup,
-//            Matrix3x2f pose,
-//            float x0,
-//            float y0,
-//            float x1,
-//            float y1,
-//            float u0,
-//            float u1,
-//            float v0,
-//            float v1,
-//            int color,
-//            @Nullable ScreenRectangle scissorArea,
-//            @Nullable ScreenRectangle bounds
-//    ) implements GuiElementRenderState {
-//        public BlitFRenderState(
-//                RenderPipeline pipeline,
-//                TextureSetup textureSetup,
-//                Matrix3x2f pose,
-//                float x0,
-//                float y0,
-//                float x1,
-//                float y1,
-//                float u0,
-//                float u1,
-//                float v0,
-//                float v1,
-//                int color,
-//                @Nullable ScreenRectangle scissorArea
-//        ) {
-//            this(pipeline, textureSetup, pose, x0, y0, x1, y1, u0, u1, v0, v1, color, scissorArea, getBounds(Mth.floor(x0), Mth.floor(y0), Mth.ceil(x1), Mth.ceil(y1), pose, scissorArea));
-//        }
-//
-//        @Override
-//        public void buildVertices(VertexConsumer vertexConsumer) {
-//            vertexConsumer.addVertexWith2DPose(pose, x0, y0).setUv(u0, v0).setColor(color);
-//            vertexConsumer.addVertexWith2DPose(pose, x0, y1).setUv(u0, v1).setColor(color);
-//            vertexConsumer.addVertexWith2DPose(pose, x1, y1).setUv(u1, v1).setColor(color);
-//            vertexConsumer.addVertexWith2DPose(pose, x1, y0).setUv(u1, v0).setColor(color);
-//        }
-//
-//        private static @Nullable ScreenRectangle getBounds(int x0, int y0, int x1, int y1, Matrix3x2f pose, @Nullable ScreenRectangle scissorArea) {
-//            ScreenRectangle bounds = new ScreenRectangle(x0, y0, x1 - x0, y1 - y0).transformMaxBounds(pose);
-//            return scissorArea != null ? scissorArea.intersection(bounds) : bounds;
-//        }
-//    }
 
     public record ColoredRectangleFRenderState(
             RenderPipeline pipeline,

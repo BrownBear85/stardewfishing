@@ -3,7 +3,9 @@ package com.bonker.stardewfishing.server.data;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.init.SFItems;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -26,8 +28,10 @@ import org.joml.Vector2i;
 
 import java.util.List;
 
-public class LegendaryFishModifier implements IGlobalLootModifier {
-    public static final MapCodec<LegendaryFishModifier> CODEC = MapCodec.unit(LegendaryFishModifier::new);
+public record LegendaryFishModifier(int priority) implements IGlobalLootModifier {
+    public static final MapCodec<LegendaryFishModifier> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            Codec.INT.fieldOf("priority").forGetter(LegendaryFishModifier::priority)
+    ).apply(inst, LegendaryFishModifier::new));
 
     private static final List<Identifier> FISHING_LOOT_TABLES = List.of(
             BuiltInLootTables.FISHING.identifier(),
@@ -135,7 +139,7 @@ public class LegendaryFishModifier implements IGlobalLootModifier {
         }
 
         public Item chooseFish(Level level) {
-            boolean rand = level.random.nextBoolean();
+            boolean rand = level.getRandom().nextBoolean();
             return (switch (this) {
                 case NORMAL_OCEAN -> rand ? SFItems.STORM_TARPON : SFItems.GOLIATH_GROUPER;
                 case WARM_OCEAN -> rand ? SFItems.BLAZING_OARFISH : SFItems.CYCLOPS_MAHIMAHI;

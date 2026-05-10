@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.ItemAbilities;
 
@@ -93,8 +94,8 @@ public class ItemUtils {
         bobber.hurtAndBreak(1, player.level(), player, item -> {
             player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS);
             Vec3 particlePos = player.getEyePosition().add(player.getLookAngle());
-            player.level().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bobberCache), particlePos.x(), particlePos.y(), particlePos.z(), 8, 0.1, 0.1, 0.1, 0.1);
-            player.displayClientMessage(Component.translatable("stardew_fishing.bobber_broke", bobberCache.getHoverName()), true);
+            player.level().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(bobberCache)), particlePos.x(), particlePos.y(), particlePos.z(), 8, 0.1, 0.1, 0.1, 0.1);
+            player.sendSystemMessage(Component.translatable("stardew_fishing.bobber_broke", bobberCache.getHoverName()), true);
         });
         return Optional.of(bobber);
     }

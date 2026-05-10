@@ -10,7 +10,7 @@ import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.Identifier;
@@ -43,7 +43,7 @@ public class RodTooltipHandler {
         MAP.clear();
     }
 
-    public static void render(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    public static void render(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
         MAP.values().forEach(tooltip -> tooltip.render(guiGraphics, partialTick, mouseX, mouseY));
     }
 
@@ -127,7 +127,7 @@ public class RodTooltipHandler {
             shakeTicks = duration;
         }
 
-        public void render(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        public void render(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(0, 0/*, 370*/);
 
@@ -139,7 +139,7 @@ public class RodTooltipHandler {
             guiGraphics.pose().popMatrix();
         }
 
-        private void renderSlot(GuiGraphics guiGraphics, float partialTick) {
+        private void renderSlot(GuiGraphicsExtractor guiGraphics, float partialTick) {
             if (Minecraft.getInstance().level == null) return;
 
             float anim = slotAnim.getInterpolated(partialTick);
@@ -155,7 +155,7 @@ public class RodTooltipHandler {
             guiGraphics.pose().popMatrix();
         }
 
-        private void renderMouse(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        private void renderMouse(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
             float anim = mouseAnim.getInterpolated(partialTick);
             float x = (1 / anim) * (mouseX);
             float y = (1 / anim) * (mouseY);

@@ -96,15 +96,15 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof FishDisplayBlockEntity fishDisplay) {
             ItemStack stack = fishDisplay.getItem();
-            if (ItemUtils.isLegendaryFish(stack) && pLevel.random.nextFloat() < 0.25F) {
+            if (ItemUtils.isLegendaryFish(stack) && pLevel.getRandom().nextFloat() < 0.25F) {
                 Direction facing = pState.getValue(FACING);
                 Vector3f spawnPos = new Vector3f(pPos.getX() + 0.5F - facing.getStepX() * 0.3F, pPos.getY(), pPos.getZ() + 0.5F - facing.getStepZ() * 0.3F);
                 if (facing.getAxis() == Direction.Axis.X) {
-                    spawnPos.z += pLevel.random.nextFloat() - 0.5F;
+                    spawnPos.z += pLevel.getRandom().nextFloat() - 0.5F;
                 } else {
-                    spawnPos.x += pLevel.random.nextFloat() - 0.5F;
+                    spawnPos.x += pLevel.getRandom().nextFloat() - 0.5F;
                 }
-                spawnPos.y += pLevel.random.nextFloat();
+                spawnPos.y += pLevel.getRandom().nextFloat();
                 pLevel.addParticle(SFParticles.SPARKLE.get(), spawnPos.x, spawnPos.y, spawnPos.z, 0, 0, 0);
             }
         }

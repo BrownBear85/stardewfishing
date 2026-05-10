@@ -208,10 +208,10 @@ public class FishingHookLogic {
         int rolls;
         if (isGolden) {
             rolls = 2; // 100% for at least 2
-            if (level.random.nextFloat() < 0.25F) {
+            if (level.getRandom().nextFloat() < 0.25F) {
                 rolls++; // 1 in 4 chance to get 3
 
-                if (level.random.nextFloat() < 0.5F) {
+                if (level.getRandom().nextFloat() < 0.5F) {
                     rolls++; // 1 in 8 chance to get 4
                 }
             }

@@ -33,7 +33,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onScreenRendered(final ContainerScreenEvent.Render.Foreground event) {
         if (SFConfig.isInventoryEquippingEnabled()) {
-            RodTooltipHandler.render(event.getGuiGraphics(), ClientProxy.getPartialTick(), event.getMouseX() - event.getContainerScreen().getGuiLeft(), event.getMouseY() - event.getContainerScreen().getGuiTop());
+            RodTooltipHandler.render(event.getGuiGraphics(), ClientProxy.getPartialTick(), event.getMouseX() - event.getContainerScreen().getLeftPos(), event.getMouseY() - event.getContainerScreen().getTopPos());
         }
     }
 

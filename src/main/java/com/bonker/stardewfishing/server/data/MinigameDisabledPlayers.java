@@ -1,5 +1,6 @@
 package com.bonker.stardewfishing.server.data;
 
+import com.bonker.stardewfishing.StardewFishing;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
@@ -19,7 +20,8 @@ public class MinigameDisabledPlayers extends SavedData {
             UUIDUtil.CODEC.listOf().fieldOf("minigame_disabled_for").forGetter(o -> o.players)
     ).apply(inst, MinigameDisabledPlayers::new));
 
-    public static final SavedDataType<MinigameDisabledPlayers> TYPE = new SavedDataType<>("minigame_disabled_players", MinigameDisabledPlayers::new, CODEC);
+    public static final SavedDataType<MinigameDisabledPlayers> TYPE =
+            new SavedDataType<>(StardewFishing.identifier("minigame_disabled_players"), MinigameDisabledPlayers::new, CODEC);
 
     private final List<UUID> players = new ArrayList<>();
 

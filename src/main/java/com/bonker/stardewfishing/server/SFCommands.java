@@ -67,7 +67,7 @@ public class SFCommands {
             throw NO_ROD.create();
         }
 
-        ItemStack stack = context.getArgument("item", ItemInput.class).createItemStack(1, false);
+        ItemStack stack = context.getArgument("item", ItemInput.class).createItemStack(1);
 
         FishingHook hook = ItemUtils.spawnHook(player, player.getItemInHand(rodHand), player.position().add(0, 1, 0));
         player.fishing = hook;
@@ -100,8 +100,8 @@ public class SFCommands {
         @Override
         public ItemInput parse(StringReader pReader) throws CommandSyntaxException {
             ItemInput item = super.parse(pReader);
-            if (!FishBehaviorReloadListener.getKeys().contains(BuiltInRegistries.ITEM.getKey(item.getItem()))) {
-                throw NO_BEHAVIOR.createWithContext(pReader, item.getItem());
+            if (!FishBehaviorReloadListener.getKeys().contains(BuiltInRegistries.ITEM.getKey(item.item().value()))) {
+                throw NO_BEHAVIOR.createWithContext(pReader, item.item().value());
             }
             return item;
         }

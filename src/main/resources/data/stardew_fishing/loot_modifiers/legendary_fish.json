@@ -1,3 +1,4 @@
 {
-  "type": "stardew_fishing:legendary_fish"
+  "type": "stardew_fishing:legendary_fish",
+  "priority": 1000
 }
