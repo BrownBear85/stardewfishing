@@ -4,6 +4,7 @@ import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.client.RodTooltipHandler;
 import com.bonker.stardewfishing.common.blocks.FishDisplayBlock;
+import com.bonker.stardewfishing.common.init.SFAttributes;
 import com.bonker.stardewfishing.common.init.SFBlocks;
 import com.bonker.stardewfishing.common.init.SFComponentTypes;
 import com.bonker.stardewfishing.common.init.SFItems;
@@ -11,7 +12,6 @@ import com.bonker.stardewfishing.common.items.LegendaryCatch;
 import com.bonker.stardewfishing.common.networking.C2SCompleteMinigamePacket;
 import com.bonker.stardewfishing.common.networking.S2CStartMinigamePacket;
 import com.bonker.stardewfishing.common.networking.S2CSyncModifiersPacket;
-import com.bonker.stardewfishing.proxy.ClientProxy;
 import com.bonker.stardewfishing.proxy.ItemUtils;
 import com.bonker.stardewfishing.server.data.FishBehaviorReloadListener;
 import com.bonker.stardewfishing.server.data.MinigameModifiersReloadListener;
@@ -19,6 +19,8 @@ import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -29,12 +31,14 @@ import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 @EventBusSubscriber(modid = StardewFishing.MODID)
 public class CommonEvents {
@@ -166,7 +170,7 @@ public class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void onRegistryPayloadHandlers(RegisterPayloadHandlersEvent event) {
+    public static void onRegistryPayloadHandlers(final RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("3");
 
         registrar.playToClient(
@@ -186,5 +190,12 @@ public class CommonEvents {
                 C2SCompleteMinigamePacket.STREAM_CODEC,
                 C2SCompleteMinigamePacket::handle
         );
+    }
+
+    @SubscribeEvent
+    public static void onAttributesModified(final EntityAttributeModificationEvent event) {
+        for (DeferredHolder<Attribute, ? extends Attribute> attribute : SFAttributes.ATTRIBUTES.getEntries()) {
+            event.add(EntityType.PLAYER, attribute);
+        }
     }
 }
