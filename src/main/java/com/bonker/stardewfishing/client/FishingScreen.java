@@ -104,7 +104,7 @@ public class FishingScreen extends Screen {
             poseStack.popMatrix();
         } else if (status == Status.CHEST_OPENING) {
             int frame = Math.min(30 - animationTimer, 19) / 2;
-            pGuiGraphics.blit(goldenChest ? GOLDEN_CHEST_TEXTURE : CHEST_TEXTURE, leftPos + 38 / 2 - 64, topPos, 0, frame * 128, 128, 128, 128, 1280);
+            pGuiGraphics.blit(RenderPipelines.GUI_TEXTURED, goldenChest ? GOLDEN_CHEST_TEXTURE : CHEST_TEXTURE, leftPos + 38 / 2 - 64, topPos, 0, frame * 128, 128, 128, 128, 1280);
         } else {
             RenderUtil.drawWithShake(poseStack, shake, partialTick, status == Status.SUCCESS || status == Status.FAILURE, () -> {
                 RenderUtil.drawWithBlend(() -> {
@@ -178,7 +178,6 @@ public class FishingScreen extends Screen {
                 float progress = progressBar.getInterpolated(partialTick);
                 int color = Mth.hsvToRgb(progress / 3.0F, 1.0F, 1.0F) | 0xFF000000;
                 RenderUtil.fillF(pGuiGraphics, leftPos + 33, topPos + 148, leftPos + 37, topPos + 148 - progress * 145, color);
-//                pGuiGraphics.fill(leftPos + 33, topPos + 148, leftPos + 37, (int) (topPos + 148 - progress * 145), color);
 
                 // draw handle
                 RenderUtil.drawRotatedAround(poseStack, handleRot.getInterpolated(partialTick), leftPos + 6.5F, topPos + 130.5F, () ->
