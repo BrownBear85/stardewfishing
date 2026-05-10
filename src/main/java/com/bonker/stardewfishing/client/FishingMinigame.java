@@ -172,7 +172,9 @@ public class FishingMinigame {
                 screen.setResult(true, (double) successTicks / totalTicks, gotChest(), isGoldenChest());
             }
         } else if (!hasTreasureBobber || !bobberOnChest) {
-            points -= 1 - lineStrength;
+            // Line strength of 1.0  -> -1.0  per tick
+            // Line strength of 1.33 -> -0.67 per tick
+            points = Math.max(0, points - 2 + lineStrength);
             if (points <= 0) {
                 screen.setResult(false, 0, false, false);
             }

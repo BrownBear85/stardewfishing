@@ -3,6 +3,7 @@ package com.bonker.stardewfishing.common;
 import com.bonker.stardewfishing.SFConfig;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.client.RodTooltipHandler;
+import com.bonker.stardewfishing.common.init.SFAttributes;
 import com.bonker.stardewfishing.common.init.SFItems;
 import com.bonker.stardewfishing.common.networking.S2CSyncModifiersPacket;
 import com.bonker.stardewfishing.common.networking.SFNetworking;
@@ -15,10 +16,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.*;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
@@ -27,6 +31,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.registries.RegistryObject;
 
 public class CommonEvents {
     @Mod.EventBusSubscriber(modid = StardewFishing.MODID)
@@ -156,6 +161,13 @@ public class CommonEvents {
         @SubscribeEvent
         public static void onCommonSetup(final FMLCommonSetupEvent event) {
             SFNetworking.register();
+        }
+
+        @SubscribeEvent
+        public static void onAttributesModified(final EntityAttributeModificationEvent event) {
+            for (RegistryObject<Attribute> attribute : SFAttributes.ATTRIBUTES.getEntries()) {
+                event.add(EntityType.PLAYER, attribute.get());
+            }
         }
     }
 }
