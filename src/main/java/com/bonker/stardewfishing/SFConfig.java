@@ -26,6 +26,7 @@ public class SFConfig {
 
     // client
     private static final ForgeConfigSpec.BooleanValue ISOLATE_AUDIO_CUES;
+    private static final ForgeConfigSpec.BooleanValue PAUSE_DURING_MINIGAME;
 
     static {
         QUALITY_1_THRESHOLD = SERVER_BUILDER
@@ -82,6 +83,10 @@ public class SFConfig {
                 .comment("When this setting is enabled, audio cues in the minigame will be louder and other sounds will be muted.")
                 .define("isolateAudioCues", false);
 
+        PAUSE_DURING_MINIGAME = CLIENT_BUILDER
+                .comment("When this setting is enabled, the fishing minigame will pause the world in singleplayer.")
+                .define("pauseDuringMinigame", true);
+
         CLIENT_SPEC = CLIENT_BUILDER.build();
     }
 
@@ -135,5 +140,9 @@ public class SFConfig {
 
     public static boolean isolateAudioCues() {
         return ISOLATE_AUDIO_CUES.get();
+    }
+
+    public static boolean pauseDuringMinigame() {
+        return PAUSE_DURING_MINIGAME.get();
     }
 }

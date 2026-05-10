@@ -400,7 +400,7 @@ public class FishingScreen extends Screen {
 
     @Override
     public boolean isPauseScreen() {
-        return status != Status.HIT_TEXT;
+        return status != Status.HIT_TEXT && SFConfig.pauseDuringMinigame();
     }
 
     public void setResult(boolean success, double accuracy, boolean gotChest, boolean goldenChest) {
