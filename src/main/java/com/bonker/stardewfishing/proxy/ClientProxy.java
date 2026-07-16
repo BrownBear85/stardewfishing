@@ -8,7 +8,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ClientProxy {
     public static void openFishingScreen(S2CStartMinigamePacket packet, IPayloadContext context) {
-        Minecraft.getInstance().setScreen(new FishingScreen(packet));
+        Minecraft.getInstance().gui.setScreen(new FishingScreen(packet));
     }
 
     public static float getPartialTick() {

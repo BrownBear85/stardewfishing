@@ -19,7 +19,7 @@ import com.bonker.stardewfishing.server.SFCommands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
@@ -195,7 +195,7 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onAttributesModified(final EntityAttributeModificationEvent event) {
         for (DeferredHolder<Attribute, ? extends Attribute> attribute : SFAttributes.ATTRIBUTES.getEntries()) {
-            event.add(EntityType.PLAYER, attribute);
+            event.add(EntityTypes.PLAYER, attribute);
         }
     }
 }

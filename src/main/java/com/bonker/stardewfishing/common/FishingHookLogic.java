@@ -15,7 +15,7 @@ import com.bonker.stardewfishing.server.data.MinigameDisabledPlayers;
 import com.bonker.stardewfishing.server.event.StardewMinigameEndedEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameModifyRewardsEvent;
 import com.bonker.stardewfishing.server.event.StardewMinigameStartedEvent;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

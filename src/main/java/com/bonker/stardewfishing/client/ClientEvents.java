@@ -23,7 +23,7 @@ import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 public class ClientEvents {
     @SubscribeEvent
     public static void onClientTick(final ClientTickEvent.Pre event) {
-        if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
+        if (Minecraft.getInstance().gui.screen() instanceof AbstractContainerScreen<?> containerScreen) {
             RodTooltipHandler.tick(containerScreen.hoveredSlot, containerScreen.getMenu().getCarried());
         } else {
             RodTooltipHandler.clear();
@@ -68,7 +68,7 @@ public class ClientEvents {
                         instance.getX(),
                         instance.getY(),
                         instance.getZ()));
-            } else if (SFConfig.isolateAudioCues() && !instance.getIdentifier().getNamespace().equals(StardewFishing.MODID) && Minecraft.getInstance().screen instanceof FishingScreen) {
+            } else if (SFConfig.isolateAudioCues() && !instance.getIdentifier().getNamespace().equals(StardewFishing.MODID) && Minecraft.getInstance().gui.screen() instanceof FishingScreen) {
                 event.setSound(null);
             }
         } catch (Exception e) {
