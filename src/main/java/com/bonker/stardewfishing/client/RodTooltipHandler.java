@@ -43,8 +43,8 @@ public class RodTooltipHandler {
         MAP.clear();
     }
 
-    public static void render(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
-        MAP.values().forEach(tooltip -> tooltip.render(guiGraphics, partialTick, mouseX, mouseY));
+    public static void render(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY, int left, int top) {
+        MAP.values().forEach(tooltip -> tooltip.render(guiGraphics, partialTick, mouseX, mouseY, left, top));
     }
 
     public static void addShake(Slot slot, boolean equip) {
@@ -127,24 +127,24 @@ public class RodTooltipHandler {
             shakeTicks = duration;
         }
 
-        public void render(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
+        public void render(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY, int left, int top) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(0, 0/*, 370*/);
 
             RenderUtil.drawWithShake(guiGraphics.pose(), shake, partialTick, true, () -> {
-                RenderUtil.drawWithBlend(() -> renderSlot(guiGraphics, partialTick));
+                RenderUtil.drawWithBlend(() -> renderSlot(guiGraphics, partialTick, left, top));
             });
             RenderUtil.drawWithBlend(() -> renderMouse(guiGraphics, partialTick, mouseX, mouseY));
 
             guiGraphics.pose().popMatrix();
         }
 
-        private void renderSlot(GuiGraphicsExtractor guiGraphics, float partialTick) {
+        private void renderSlot(GuiGraphicsExtractor guiGraphics, float partialTick, int left, int top) {
             if (Minecraft.getInstance().level == null) return;
 
             float anim = slotAnim.getInterpolated(partialTick);
-            float x = (1 / anim) * (slot.x + 8);
-            float y = (1 / anim) * (slot.y + 8);
+            float x = (1 / anim) * (left + slot.x + 8);
+            float y = (1 / anim) * (top + slot.y + 8);
 
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().scale(anim, anim);
