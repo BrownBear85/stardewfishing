@@ -163,13 +163,13 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    def include_tide = false
+    def include_tide = true
     def include_aquaculture = false
     def include_ndu = false
     def include_fishing_real = false
-    def include_cobblemon = true
+    def include_cobblemon = false
 
-    def tide = "blank:tide:${minecraft_version}"
+    def tide = ":tide-${minecraft_version}"
     if (include_tide) {
         implementation tide
         localRuntime "me.shedaniel.cloth:cloth-config-neoforge:${cloth_version}"
@@ -190,11 +190,14 @@ dependencies {
     }
 
     if (include_cobblemon) {
-        implementation "blank:cobblemon:${minecraft_version}"
-        implementation "blank:kotlinforforge:${minecraft_version}"
+        implementation ":cobblemon-${minecraft_version}"
+        implementation ":kotlinforforge-${minecraft_version}"
+    } else {
+        compileOnly ":cobblemon-${minecraft_version}"
+        compileOnly ":kotlinforforge-${minecraft_version}"
     }
 
-    implementation "blank:quality_food:${minecraft_version}"
+    implementation ":quality_food-${minecraft_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
