@@ -1,4 +1,10 @@
 {
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "netherdepthsupgrade"
+    }
+  ],
   "type": "minecraft:fishing",
   "pools": [
     {
