@@ -194,7 +194,7 @@ dependencies {
         implementation "blank:kotlinforforge:${minecraft_version}"
     }
 
-//    implementation "blank:quality_food:${minecraft_version}"
+    implementation ":quality_food-${minecraft_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
