@@ -20,7 +20,7 @@ public class ClientProxy {
         if (Minecraft.getInstance().getTimer() instanceof DeltaTracker.Timer timer) {
             return timer.deltaTickResidual;
         } else {
-            return 1;
+            return Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         }
     }
 }
