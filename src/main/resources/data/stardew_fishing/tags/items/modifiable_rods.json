@@ -4,6 +4,10 @@
     {
       "id": "netherdepthsupgrade:lava_fishing_rod",
       "required": false
+    },
+    {
+      "id": "cthulhufishing:heavy_fishing_rod",
+      "required": false
     }
   ]
 }
