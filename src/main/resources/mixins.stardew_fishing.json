@@ -8,7 +8,6 @@
     "ArmorDyeRecipeMixin",
     "FishingHookAccessor",
     "FishingHookMixin",
-    "FishingRodItemMixin",
     "LavaFishingBobberEntityMixin"
   ],
   "client": [],
