@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.List;
+import java.util.Objects;
 
 public record LegendaryFishModifier(int priority) implements IGlobalLootModifier {
     public static final MapCodec<LegendaryFishModifier> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -51,6 +52,11 @@ public record LegendaryFishModifier(int priority) implements IGlobalLootModifier
 
     @Override
     public @NotNull ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        if (!context.hasParameter(LootContextParams.ORIGIN)) {
+            // context has no positional data
+            return generatedLoot;
+        }
+
         if (generatedLoot.isEmpty()) {
             // definitely no fish to replace
             return generatedLoot;
@@ -86,7 +92,7 @@ public record LegendaryFishModifier(int priority) implements IGlobalLootModifier
         }
 
         ServerLevel level = context.getLevel();
-        BlockPos pos = BlockPos.containing(context.getParameter(LootContextParams.ORIGIN));
+        BlockPos pos = BlockPos.containing(Objects.requireNonNull(context.getOptional(LootContextParams.ORIGIN)));
 
         LegendaryCategory category = findLegendaryCategory(level, pos);
         if (category != null) {

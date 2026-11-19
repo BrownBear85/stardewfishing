@@ -9,6 +9,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.phys.Vec3;
 
@@ -42,7 +43,7 @@ public class AquacultureProxy {
         if (contents.getSlots() <= slot) {
             return ItemStack.EMPTY;
         }
-        return contents.getStackInSlot(slot);
+        return contents.getTemplateInSlot(slot).map(ItemStackTemplate::create).orElse(ItemStack.EMPTY);
     }
 
     public static void setStackInSlot(ItemStack fishingRod, int slot, ItemStack stack) {

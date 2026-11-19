@@ -13,6 +13,6 @@ public class SFLootPoolEntryTypes {
     public static final DeferredRegister<MapCodec<? extends LootPoolEntryContainer>> LOOT_POOL_ENTRY_TYPES =
             DeferredRegister.create(Registries.LOOT_POOL_ENTRY_TYPE, StardewFishing.MODID);
 
-    public static final Supplier<MapCodec<OptionalLootItem>> MOD_LOADED = LOOT_POOL_ENTRY_TYPES.register("optional",
-            () -> OptionalLootItem.CODEC);
+    public static final Supplier<MapCodec<OptionalLootItem>> OPTIONAL = LOOT_POOL_ENTRY_TYPES.register("optional",
+            () -> OptionalLootItem.MAP_CODEC);
 }

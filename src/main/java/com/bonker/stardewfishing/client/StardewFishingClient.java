@@ -11,7 +11,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 
@@ -22,7 +21,7 @@ public class StardewFishingClient {
     public static final Lazy<KeyMapping> MINIGAME_BUTTON = Lazy.of(() -> new KeyMapping(
             "key.stardew_fishing.minigame_button",
             KeyConflictContext.GUI,
-            InputConstants.Type.MOUSE.getOrCreate(GLFW.GLFW_MOUSE_BUTTON_1),
+            InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT),
             CATEGORY));
 
     public StardewFishingClient(ModContainer container) {

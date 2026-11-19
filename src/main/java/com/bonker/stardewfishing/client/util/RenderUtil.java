@@ -1,8 +1,8 @@
 package com.bonker.stardewfishing.client.util;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Divisor;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

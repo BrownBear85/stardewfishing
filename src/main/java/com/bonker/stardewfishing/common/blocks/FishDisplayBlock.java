@@ -3,7 +3,6 @@ package com.bonker.stardewfishing.common.blocks;
 import com.bonker.stardewfishing.StardewFishing;
 import com.bonker.stardewfishing.common.init.SFParticles;
 import com.bonker.stardewfishing.proxy.ItemUtils;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -17,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class FishDisplayBlock extends HorizontalDirectionalBlock implements EntityBlock, SimpleWaterloggedBlock {
-    private static final MapCodec<FishDisplayBlock> CODEC = simpleCodec(FishDisplayBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE_NORTH = box(0, 2, 0, 1, 14, 16);
     private static final VoxelShape SHAPE_SOUTH = box(15, 2, 0, 16, 14, 16);
@@ -50,11 +49,6 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
     public FishDisplayBlock(Properties pProperties) {
         super(pProperties);
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
-    }
-
-    @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return CODEC;
     }
 
     public static boolean canBeDisplayed(ItemStack stack) {
@@ -74,7 +68,7 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
                         stack.shrink(1);
                     }
                     level.playSound(player, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    player.swing(hand);
+                    player.swing(hand, SwingAnimation.DEFAULT, true);
                     return InteractionResult.SUCCESS;
                 }
             } else {
@@ -83,7 +77,7 @@ public class FishDisplayBlock extends HorizontalDirectionalBlock implements Enti
                 }
                 fishDisplay.setItem(ItemStack.EMPTY);
                 level.playSound(player, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
-                player.swing(hand);
+                player.swing(hand, SwingAnimation.DEFAULT, true);
                 return InteractionResult.SUCCESS;
             }
         }

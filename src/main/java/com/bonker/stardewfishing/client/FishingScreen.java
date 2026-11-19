@@ -353,7 +353,7 @@ public class FishingScreen extends Screen {
 
     @Override
     public boolean keyPressed(@NotNull KeyEvent event) {
-        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.KEYSYM &&
+        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.KEYBOARD &&
                 event.key() == StardewFishingClient.MINIGAME_BUTTON.get().getKey().getValue()) {
             if (status == Status.MINIGAME) {
                 setInputDown(true);
@@ -366,7 +366,7 @@ public class FishingScreen extends Screen {
 
     @Override
     public boolean keyReleased(@NotNull KeyEvent event) {
-        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.KEYSYM &&
+        if (StardewFishingClient.MINIGAME_BUTTON.get().getKey().getType() == InputConstants.Type.KEYBOARD &&
                 event.key() == StardewFishingClient.MINIGAME_BUTTON.get().getKey().getValue()) {
             setInputDown(false);
         }

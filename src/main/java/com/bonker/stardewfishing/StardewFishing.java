@@ -81,7 +81,7 @@ public class StardewFishing {
         SFComponentTypes.DATA_COMPONENT_TYPES.register(bus);
         SFLootPoolEntryTypes.LOOT_POOL_ENTRY_TYPES.register(bus);
 
-        container.registerConfig(ModConfig.Type.SERVER, SFConfig.SERVER_SPEC);
+        container.registerConfig(ModConfig.Type.SYNCED, SFConfig.SERVER_SPEC);
     }
     
     public static Identifier identifier(String path) {

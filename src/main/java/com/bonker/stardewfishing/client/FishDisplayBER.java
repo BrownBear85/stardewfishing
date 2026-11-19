@@ -31,6 +31,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
 public class FishDisplayBER implements BlockEntityRenderer<@NotNull FishDisplayBlockEntity, FishDisplayBER.@NotNull FishDisplayRenderState> {
@@ -96,13 +97,13 @@ public class FishDisplayBER implements BlockEntityRenderer<@NotNull FishDisplayB
         poseStack.translate(0.5 + renderState.facing.getStepX() * offset, 0.5, 0.5 + renderState.facing.getStepZ() * offset);
 
         float rot = switch (renderState.facing) {
-            case SOUTH -> 180;
-            case WEST -> 90;
-            case EAST -> -90;
+            case SOUTH -> Mth.PI;
+            case WEST -> Mth.HALF_PI;
+            case EAST -> -Mth.HALF_PI;
             default -> 0;
         };
         if (rot != 0) {
-            poseStack.mulPose(Axis.YP.rotationDegrees(rot));
+            poseStack.mulPose(Axis.YP.rotate(new Matrix4f(), rot));
         }
 
         if (renderState.renderLabel) {
@@ -117,7 +118,7 @@ public class FishDisplayBER implements BlockEntityRenderer<@NotNull FishDisplayB
             poseStack.pushPose();
             poseStack.translate(0, -0.25F, -0.25F);
             poseStack.scale(-0.025F, 0.025F, 0.025F);
-            poseStack.mulPose(Axis.XP.rotation(Mth.PI));
+            poseStack.mulPose(Axis.XP.rotate(new Matrix4f(), Mth.PI));
 
             nodeCollector.submitText(poseStack, -Minecraft.getInstance().font.width(component) / 2F, 0, component.getVisualOrderText(), true, Font.DisplayMode.NORMAL, renderState.lightCoords, 0xFFFFFFFF, 0x20FFFFFF, 0);
 
